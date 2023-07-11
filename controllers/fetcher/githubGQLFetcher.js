@@ -23,6 +23,7 @@ const getInfo = (options) => {
             logger.error(err);
             cached = null;
           }
+          logger.debug("Step.cache: ", step.cache ? "true" : "false");
           if (step.cache && cached) {
             resultData = cached;
           } else {
@@ -35,18 +36,18 @@ const getInfo = (options) => {
           }
         } else if (step.type === 'objectGetSubObject' || step.type === 'objectGetSubObjects') {
           if (options.debug || step.debug) {
-            logger.info("STEP DEBUG: Step.location: ", step.location);
-            logger.info("STEP DEBUG: ResultData before getSubObject: ", JSON.stringify(resultData));
+            logger.info("STEP DEBUG [" + stepNumber + "] [" + stepNumber + "]: Step.location: ", step.location);
+            logger.info("STEP DEBUG [" + stepNumber + "]: ResultData before getSubObject: ", JSON.stringify(resultData, null, 2));
           }
           resultData = getSubObject(resultData, step.location);
-          if (options.debug || step.debug) logger.info("STEP DEBUG: ResultData after getSubObject: ", JSON.stringify(resultData));
+          if (options.debug || step.debug) logger.info("STEP DEBUG [" + stepNumber + "]: ResultData after getSubObject: ", JSON.stringify(resultData, null, 2));
         } else if (step.type === 'objectsFilterObject' || step.type === 'objectsFilterObjects') {
           if (options.debug || step.debug) {
-            logger.info("STEP DEBUG: Step.filters: ", step.filters);
-            logger.info("STEP DEBUG: ResultData before getMatches: ", JSON.stringify(resultData));
+            logger.info("STEP DEBUG [" + stepNumber + "]: Step.filters: ", step.filters);
+            logger.info("STEP DEBUG [" + stepNumber + "]: ResultData before getMatches: ", JSON.stringify(resultData, null, 2));
           }
           resultData = getMatches(resultData, step.filters);
-          if (options.debug || step.debug) logger.info("STEP DEBUG: ResultData after getMatches: ", JSON.stringify(resultData));
+          if (options.debug || step.debug) logger.info("STEP DEBUG [" + stepNumber + "]: ResultData after getMatches: ", JSON.stringify(resultData, null, 2));
           if (step.type === 'objectsFilterObject') {
             switch (step.keep) {
               case 'first': resultData = resultData[0]; break;
@@ -60,12 +61,12 @@ const getInfo = (options) => {
           }
         } else if (step.type === 'runScript') {
           if (options.debug || step.debug) {
-            logger.info("STEP DEBUG: Step.script: ", step.script);
-            logger.info("STEP DEBUG: Step.variables: ", JSON.stringify({ ...step.variables, from: options.from, to: options.to }));
-            logger.info("STEP DEBUG: ResultData before runScript: ", JSON.stringify(resultData));
+            logger.info("STEP DEBUG [" + stepNumber + "]: Step.script: ", step.script);
+            logger.info("STEP DEBUG [" + stepNumber + "]: Step.variables: ", JSON.stringify({ ...step.variables, from: options.from, to: options.to }, null, 2));
+            logger.info("STEP DEBUG [" + stepNumber + "]: ResultData before runScript: ", JSON.stringify(resultData, null, 2));
           }
           resultData = requireFromString(step.script).generic(resultData, { ...step.variables, from: options.from, to: options.to });
-          if (options.debug || step.debug) logger.info("STEP DEBUG: ResultData after runScript: ", JSON.stringify(resultData));
+          if (options.debug || step.debug) logger.info("STEP DEBUG [" + stepNumber + "]: ResultData after runScript: ", JSON.stringify(resultData, null, 2));
         }
       }
       resolve(resultData);
@@ -90,6 +91,8 @@ const getDataPaginated = (query, token) => {
   return new Promise((resolve, reject) => {
     const requestConfig = token ? { Authorization: token, Accept: 'application/vnd.github.starfox-preview+json' } : {};
     fetcherUtils.requestWithHeaders(apiUrl + '/graphql', requestConfig, { query: query }).then((data) => {
+      logger.debug("Query: ", JSON.stringify(query, null, 2));
+      logger.debug("getDataPaginated: ", JSON.stringify(data, null, 2));
       resolve(data);
     }).catch(err => {
       logger.error(err);
@@ -97,7 +100,6 @@ const getDataPaginated = (query, token) => {
     });
   });
 };
-
 const getMatches = (objects, filters) => {
   try {
     const matches = [];

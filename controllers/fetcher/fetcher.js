@@ -35,6 +35,13 @@ const compute = (dsl, from, to, integrations, authKeys, member) => {
 
         // We call getMetric to obtain the metric and evidences depending on the type
         getMetricAndEvidences(dsl, from, to, { ...integrations }, { ...mainEvents }, mainEventType, [...evidences], metricType, authKeys, member, dsl.event).then(result => {
+
+          console.log("from: ", from);
+          console.log("to: ", to);
+          console.log("mainEvents: ", mainEvents);
+          // console.log("evidences: ", evidences);
+          // console.log("Result: ", result);
+
           resolve(result);
         }).catch(err => {
           reject(err);
@@ -206,9 +213,10 @@ const getEventMatches = (relatedObject, mainEventsObject, mainEndpointType, from
         jsonForFunction[secondaryEventType] = relatedObject[secondaryEventType];
 
         getEventsFromJson(jsonForFunction, from, to, integrations, authKeys, member).then(secondaryEvents => {
+          
           const mainEventType = Object.keys(mainEventsObject)[0];
           var mainEvents = mainEventsObject[mainEventType];
-
+          
           findMatches(mainEvents, mainEventType, mainEndpointType, secondaryEvents, secondaryEventType, Object.keys(relatedObject[secondaryEventType])[0], relatedObject, mainEventObject).then(foundMatches => {
             resolve(foundMatches);
           }).catch(err => {
@@ -568,6 +576,9 @@ const matchBinding = (mainEvent, secondaryEvent, relatedObject) => {
 
       // Lastly we check if it matches
       if (bindingType === 'CONTAINS') {
+        console.log("mainEventValue: ", mainEventValue);
+        console.log("secondaryEventValue: ", secondaryEventValue);
+        console.log("mainEventValue.includes(secondaryEventValue): ", mainEventValue.includes(secondaryEventValue));
         if (!secondaryEventValue.includes(mainEventValue)) {
           res = false;
         }

@@ -170,6 +170,11 @@ const getPeriods = (dsl) => {
         let toDate;
         let toStr;
 
+        
+        // console.log("Initial: ", initial);
+        // console.log("End: ", end);
+        // console.log("WindowPeriod: ", windowPeriod);
+
         let keepGoing = true;
         while (keepGoing) {
           // Set from after each iteration
@@ -188,6 +193,7 @@ const getPeriods = (dsl) => {
           // Push into the array
           periods.push({ from: fromStr, to: toStr, originalFrom: fromStr, originalTo: toStr });
         }
+        // console.log("Periods: ", periods);
       }
 
       // Apply offset if needed
@@ -332,11 +338,25 @@ const calculateComputations = (dsl, periods, integrations, authKeys, members) =>
         }
       }
 
-      Promise.all(promises).then(() => {
-        resolve(computations);
-      }).catch(err => {
-        reject(err);
-      });
+      // Promise.all(promises).then(() => {
+      //   resolve(computations);
+      // }).catch(err => {
+      //   reject(err);
+      // });
+
+      // Make it synchronous
+      let i = 0;
+      const next = () => {
+        console.log("Promise " + i + " of " + promises.length + " finished.")
+        if (i < promises.length) {
+          promises[i++].then(next).catch(err => {
+            reject(err);
+          });
+        } else {
+          resolve(computations);
+        }
+      }
+      next();
     } catch (err) {
       reject(new Error('There was a problem obtaining computations.'));
     }
