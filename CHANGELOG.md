@@ -1,3 +1,45 @@
+# [1.20.0](https://github.com/governify/collector-events/compare/v1.19.1...v1.20.0) (2023-10-19)
+
+
+### Bug Fixes
+
+* removed New relic from package.json ([e194901](https://github.com/governify/collector-events/commit/e19490107e5b5e4f748d6fb19188bfc08488613e))
+
+
+### Features
+
+* added cors ([370aa14](https://github.com/governify/collector-events/commit/370aa14c6a4b559de89bbea26404f18a3fb11a6b))
+
+
+
+## [1.19.1](https://github.com/governify/collector-events/compare/v1.19.0...v1.19.1) (2023-07-28)
+
+
+### Bug Fixes
+
+* fixed typo in fetcherUtils ([a964ed7](https://github.com/governify/collector-events/commit/a964ed70f2596bd0a846c8406c857167a0fe3dad))
+
+
+
+# [1.19.0](https://github.com/governify/collector-events/compare/v1.18.0...v1.19.0) (2023-07-17)
+
+
+### Bug Fixes
+
+* Commented CI e2e tests due to dates change ([2ad4e31](https://github.com/governify/collector-events/commit/2ad4e31242117c158f07ede17620e4ffd17a5825))
+* fix for package files ([46eb462](https://github.com/governify/collector-events/commit/46eb462a0d92cf72211b6beb0671ead005c9899b))
+* Fixed bug with cache writting ([c678a8b](https://github.com/governify/collector-events/commit/c678a8b2ecd06014f81f48ab44d0c5f59903017d))
+* governify commons v1,19.0 ([bcadaba](https://github.com/governify/collector-events/commit/bcadaba46f9a8dda84d04506b65647e8a695c96a))
+* merging versions from different branches ([4faa2e4](https://github.com/governify/collector-events/commit/4faa2e4aa268bbdfd9997b3c3eb7a384fda21f1d))
+
+
+### Features
+
+* added more logging to GQL fetcher ([471d2e6](https://github.com/governify/collector-events/commit/471d2e66f225a6cecc37c64a43f3ab18e07770a0))
+* Fixed calculation for periods ([db7210f](https://github.com/governify/collector-events/commit/db7210f57683def112bd8fd1400ddb4955646dfd))
+
+
+
 # [1.18.0](https://github.com/governify/collector-events/compare/v1.17.0...v1.18.0) (2023-06-20)
 
 
