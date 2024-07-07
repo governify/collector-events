@@ -345,4 +345,5 @@ There's an object that acts as a cache in every fetcher. For development purpose
 
 ## More documentation
 Visit the governify documentation to learn more about how the collector-events works: [link](https://docs.governify.io/development/services/collectors/collector-events)
+
 Learn how to deploy the collector-events on your PC with NodeJS to create new functionalities: [link](https://docs.bluejay.governify.io/development/setup-development-environment/nodejs/collector-events)
