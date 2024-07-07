@@ -16,7 +16,7 @@ describe('Array', function () {
   before((done) => {
     governify.init().then((commonsMiddleware) => {
       governify.httpClient.setRequestLogging(false);
-      server.deploy('test', commonsMiddleware).then(() => {
+      server.deploy('test', [commonsMiddleware]).then(() => {
         nockController.instantiateMockups('test').then(() => {
           sinon.stub(console);
           done();
