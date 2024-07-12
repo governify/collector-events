@@ -15,6 +15,7 @@ info:
 paths:
   /api/v2/computations:
     post:
+      summary: Post a new computation
       description: Asks for the computation of a metric
       operationId: addComputation
       responses:
@@ -40,6 +41,7 @@ paths:
         required: true
   '/api/v2/computations/{computationId}':
     get:
+      summary: Get a computation by computationId
       description: Returns computations by computationId if its already calculated
       operationId: findComputationBycomputationId
       parameters:
@@ -58,6 +60,8 @@ paths:
                 $ref: '#/components/schemas/computationResponse'
         '202':
           description: Request is correct but computation is still being calculated
+        '404':
+          description: Computation not found
         default:
           description: unexpected error
           content:
