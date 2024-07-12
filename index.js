@@ -1,4 +1,10 @@
-'use strict';
+const oasTelemetry = require('@oas-tools/oas-telemetry');
+const YAML = require('yaml');
+const fs = require('fs');
+let oasDoc = fs.readFileSync('./api/oas-doc.yaml', 'utf8');
+oasDoc = YAML.parse(oasDoc);
+
+const oasTelemetryMiddleware = oasTelemetry({ spec: JSON.stringify(oasDoc) });
 
 // if (process.env.NEW_RELIC_APP_NAME && process.env.NEW_RELIC_LICENSE_KEY) require('newrelic');
 
@@ -12,12 +18,12 @@ const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';
 if (env === 'e2e') {
   governify.init().then((commonsMiddleware) => {
     require('./tests/nockController').instantiateMockups(env).then(() => {
-      server.deploy(env, commonsMiddleware).catch(logger.error);
+      server.deploy(env, [commonsMiddleware]).catch(logger.error);
     }).catch(logger.error);
   });
 } else {
   governify.init().then((commonsMiddleware) => {
-    server.deploy(env, commonsMiddleware).catch(logger.error);
+    server.deploy(env, [commonsMiddleware, oasTelemetryMiddleware]).catch(logger.error);
   });
 }
 

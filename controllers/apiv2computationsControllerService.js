@@ -160,7 +160,7 @@ const getPeriods = (dsl) => {
           biweekly: 14,
           monthly: 30,
           bimonthly: 60,
-          annually: 365,
+          annually: 365
         };
         const periodLength = periodLengths[windowPeriod];
         if (periodLength === undefined) { reject(new Error('metric.window.period must be within these: daily, weekly, biweekly, monthly, bimonthly, annually.')); }
@@ -283,7 +283,6 @@ const calculateComputations = (dsl, periods, integrations, authKeys, members) =>
       if (metric.scope.member === '*') {
         for (const period of periods) {
           for (const member of members) {
-            
             const promise = new Promise((resolve, reject) => {
               fetcher.compute(metric, period.from, period.to, integrations, authKeys, member).then(result => {
                 if (!isNaN(result.metric)) {

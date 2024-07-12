@@ -7,9 +7,9 @@ const sourcesManager = require('../sourcesManager/sourcesManager');
 const _ = require('lodash');
 
 const temporalDB = new Map();
-const aux = []
+const aux = [];
 
-function getTemporalDB(key) {
+function getTemporalDB (key) {
   logger.debug('TemporalDB aux before get: \n\t', JSON.stringify(aux, null, 2));
   logger.debug('TemporalDB before get key: \n\t', JSON.stringify(temporalDB.entries(), null, 2));
   const result = temporalDB.get(key);
@@ -18,31 +18,31 @@ function getTemporalDB(key) {
   logger.debug('Getting TemporalDB: \n\t', JSON.stringify(key, null, 2), ' \n\t=====\n\t ', JSON.stringify(result, null, 2));
   logger.debug('TemporalDB aux after get: \n\t', JSON.stringify(aux, null, 2));
   return result;
-};
+}
 
-function setTemporalDB(key, value) {
+function setTemporalDB (key, value) {
   logger.debug('Setting TemporalDB: \n\t', JSON.stringify(key, null, 2), ' \n\t=====\n\t ', JSON.stringify(_.cloneDeep(value), null, 2));
   logger.debug('TemporalDB aux before set: \n\t', JSON.stringify(aux, null, 2));
   if (value !== undefined) {
     logger.debug('TemporalDB setting value: \n\t', JSON.stringify(_.cloneDeep(value)));
   }
   temporalDB.set(key, _.cloneDeep(value));
-  aux.push({[new Date().getTime()]: _.cloneDeep(value)});
+  aux.push({ [new Date().getTime()]: _.cloneDeep(value) });
   logger.debug('TemporalDB aux after set: \n\t', JSON.stringify(temporalDB.entries(), null, 2));
-};
+}
 
-function deleteTemporalDB(key) {
+function deleteTemporalDB (key) {
   logger.debug('Deleting TemporalDB: \n\t', JSON.stringify(key, null, 2));
   temporalDB.delete(key);
-};
+}
 
-function includesTemporalDB(key) {
+function includesTemporalDB (key) {
   const result = temporalDB.has(key);
   logger.debug('TemporalDB includes: \n\t', JSON.stringify(key, null, 2), ' \n\t=====\n\t ', result);
   return result;
 }
 
-function hasValueTemporalDB(key) {
+function hasValueTemporalDB (key) {
   const result = getTemporalDB(key) !== undefined;
   logger.debug('TemporalDB has value: \n\t', JSON.stringify(key, null, 2), ' \n\t=====\n\t ', result);
   return result;
