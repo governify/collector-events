@@ -27,7 +27,7 @@ jobs:
       uses: supercharge/redis-github-action@1.2.0
       with:
         redis-version: ${{ matrix.redis-version }}
-    - name: Install dependencies 
+    - name: Install dependencies (If error 'Cannot read property of undefined', delete package-lock.json and 'npm i' with Node 14)
       run: npm ci
 #    - name: Check syntax
 #      run: npm run lint
