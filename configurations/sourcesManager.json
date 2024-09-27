@@ -170,6 +170,10 @@
             "updatedIssues": {
                 "endpoint": "/search?jql=project={jira.projectId}",
                 "payloadDate": "fields.updated"
+            },
+            "issuesByStatusAndAssignee": {
+                "endpoint": "/search?jql=project={jira.projectId}&fields=assignee,status,updated",
+                "payloadDate": "fields.updated"
             }
         }
     },

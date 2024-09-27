@@ -6,7 +6,7 @@ const logger = require('governify-commons').getLogger().tag('fetcher-jira');
 const apiUrl = 'https://jira.atlassian.com/rest/api/latest';
 const eventType = 'jira';
 
-const requestCache = {};
+let requestCache = {};
 
 // Function who controls the script flow
 const getInfo = (options) => {
@@ -20,42 +20,7 @@ const getInfo = (options) => {
         options.endpointType,
         eventType
       ).then((filteredData) => {
-        // if (options.endpointType === 'issuesMovedToInProgress') {
-        //   const result = [];
-        //   const promises = [];
-
-        //   for (const issue of filteredData) {
-        //     const promise = new Promise((resolve, reject) => {
-        //       try {
-        //         fetcherUtils.requestWithHeaders(apiUrl + '/issues/' + issue.id + '.json?include=journals', { 'X-Redmine-API-Key': options.token }).then(data => {
-        //           data = Object.values(data)[0];
-        //           for (const journal of data.journals) {
-        //             for (const detail of journal.details) {
-        //               if (detail.name === 'status_id' && detail.new_value === '2') {
-        //                 result.push(data);
-        //               }
-        //             }
-        //           }
-        //           resolve();
-        //         }).catch(err => {
-        //           reject(err);
-        //         });
-        //       } catch (err) {
-        //         reject(err);
-        //       }
-        //     });
-
-        //     promises.push(promise);
-        //   }
-
-        //   Promise.all(promises).then(() => {
-        //     resolve(result);
-        //   }).catch(err => {
-        //     reject(err);
-        //   });
-        // } else {
         resolve(filteredData);
-        // }
       }).catch(err => {
         reject(err);
       });
@@ -70,7 +35,7 @@ const getDataPaginated = (url, token, offset = 0) => {
     let requestUrl = url;
     requestUrl += requestUrl.split('/').pop().includes('?') ? '&maxResults=100&startAt=' + offset : '?maxResults=100&startAt=' + offset;
 
-    const cached = requestCache[requestUrl];
+    /*const cached = requestCache[requestUrl];
 
     if (cached !== undefined) {
       if (cached.length !== 0) {
@@ -78,10 +43,17 @@ const getDataPaginated = (url, token, offset = 0) => {
           resolve(cached.concat(recData));
         }).catch((err) => { reject(err); });
       } else { resolve([]); }
-    } else {
+    } else {*/
       fetcherUtils.requestWithHeaders(requestUrl, { Authorization: token }).then((response) => {
-        const data = Object.values(response).pop(); // Result of the request
+        const originalData = Object.values(response).pop(); // Result of the request
+        let data = [];
+        originalData.forEach(issue => {
+          issue.assigneeName = issue.fields.assignee ? issue.fields.assignee.name : null;
+          issue.statusName = issue.fields.status ? issue.fields.status.name : null;
+          data.push(issue);
+        });
         if (data.length && data.length !== 0) {
+          requestCache = {};
           requestCache[requestUrl] = data;
           getDataPaginated(url, token, offset + data.length).then(recData => {
             resolve(data.concat(recData));
@@ -105,7 +77,7 @@ const getDataPaginated = (url, token, offset = 0) => {
           resolve([]);
         }
       }).catch(err => reject(err));
-    }
+    //}
   });
 };
 

@@ -145,7 +145,12 @@ const getDataPaginated = (url, token, to, page = 1) => {
       }
     } else {
       const requestConfig = token ? { 'PRIVATE-TOKEN': token } : {};
-      fetcherUtils.requestWithHeaders(requestUrl, requestConfig).then((data) => {
+      fetcherUtils.requestWithHeaders(requestUrl, requestConfig).then((originalData) => {
+        let data = [];
+        originalData.forEach(globject => {
+          if (globject.push_data && globject.push_data.ref) globject.branch_name = globject.push_data.ref;
+          data.push(globject);
+        });
         if (data.length && data.length !== 0) {
           cacheData(data, requestUrl, to);
           getDataPaginated(url, token, to, page + 1).then(recData => {
