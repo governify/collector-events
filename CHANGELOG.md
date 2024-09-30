@@ -1,3 +1,30 @@
+# [1.22.0](https://github.com/governify/collector-events/compare/v1.21.0...v1.22.0) (2024-09-30)
+
+
+### Bug Fixes
+
+* dockerfile ([2fc9369](https://github.com/governify/collector-events/commit/2fc936949424cb696397ab2994869746eb74062d))
+* gh actions comment ([ed18722](https://github.com/governify/collector-events/commit/ed187221ab63a4438773eca957d727956b63e8ed))
+* github actions ([cf9cc90](https://github.com/governify/collector-events/commit/cf9cc90655883f4ac069a8c2884f0d8c74210b08))
+* node docker version ([8574046](https://github.com/governify/collector-events/commit/8574046e137852067943a83427b433daecb74a54))
+* node version ([d41d5ca](https://github.com/governify/collector-events/commit/d41d5cab14758c915a90901e9735e86ad7efe98f))
+* package ([cc15971](https://github.com/governify/collector-events/commit/cc15971fec34469cb03f58ab42233db0487cbac3))
+* package ([46a43e4](https://github.com/governify/collector-events/commit/46a43e4eac37699f122b5398f3edc54edb26e2f4))
+* package lock ([d4d0a6f](https://github.com/governify/collector-events/commit/d4d0a6f39fb7f558ff5ea1b51699153e2798a81e))
+* package version ([9d7ccc4](https://github.com/governify/collector-events/commit/9d7ccc4cb6b3c00d281d7edbcb5c2b8e956ebf13))
+* package-lock ([e0c9d19](https://github.com/governify/collector-events/commit/e0c9d19d4040f0ad72929a08c4b1333a57fc5792))
+* package-lock ([4676f8b](https://github.com/governify/collector-events/commit/4676f8bfb7273ff801dcbbfd7727023412e5f47a))
+* package-lock ([f9bf1a8](https://github.com/governify/collector-events/commit/f9bf1a8639e48e86ad5dfc86cf3b3c3db3c8472c))
+* packagees ([ecf89d4](https://github.com/governify/collector-events/commit/ecf89d4c9b041f3a5475e5f0f18f50b83d9345e0))
+
+
+### Features
+
+* gql-paginator in githubGQLFetcher ([440c1c4](https://github.com/governify/collector-events/commit/440c1c41784741c13b29b86ddf614ef3eeeb168f))
+* node version warning on github actions ([cf734c2](https://github.com/governify/collector-events/commit/cf734c2feb72f861f8a5c04a73d10a3b170bdce4))
+
+
+
 # [1.21.0](https://github.com/governify/collector-events/compare/v1.20.0...v1.21.0) (2024-07-12)
 
 
