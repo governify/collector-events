@@ -4,7 +4,7 @@ const fetcherUtils = require('./fetcherUtils');
 const redisManager = require('./redisManager');
 const logger = require('governify-commons').getLogger().tag('fetcher-githubGQL');
 
-const apiUrl = 'https://api.github.com';
+const { GQLPaginator } = require('gql-paginator');
 
 // Function who controls the script flow
 const getInfo = (options) => {
@@ -28,8 +28,9 @@ const getInfo = (options) => {
 
           if (step.cache && cached) {
             resultData = cached;
+            logger.info("[CACHED COMPUTE]: Getting information from redis cache in githubGQLFetcher")
           } else {
-            await getDataPaginated(step.query, options.token).then(data => {
+            await getDataPaginated(step.query, options.token, options.paginatorConfig ? options.paginatorConfig : 'github-v1.0.0').then(data => {
               resultData = data;
               step.cache && redisManager.setCache(options.from + options.to + step.query, data);
             }).catch(err => {
@@ -89,18 +90,9 @@ function requireFromString (src, filename = 'default') {
 
 // Paginates github data to retrieve everything
 // TODO - Pagination
-const getDataPaginated = (query, token) => {
-  return new Promise((resolve, reject) => {
-    const requestConfig = token ? { Authorization: token, Accept: 'application/vnd.github.starfox-preview+json' } : {};
-    fetcherUtils.requestWithHeaders(apiUrl + '/graphql', requestConfig, { query: query }).then((data) => {
-      logger.debug('Query: ', JSON.stringify(query, null, 2));
-      logger.debug('getDataPaginated: ', JSON.stringify(data, null, 2));
-      resolve(data);
-    }).catch(err => {
-      logger.error(err);
-      resolve(new Error('Failed when fetching to github.'));
-    });
-  });
+async function getDataPaginated(query, token, paginatorConfig) {
+    let result = await GQLPaginator(query, token, paginatorConfig); 
+    return result
 };
 
 const getMatches = (objects, filters) => {

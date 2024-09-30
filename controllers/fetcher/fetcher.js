@@ -274,7 +274,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
             .getInfo({
               from: from,
               to: to,
-              token: generateToken(integrations.github.apiKey, authKeys.github, 'token '),
+              token: generateToken(integrations.github.apiKey, authKeys.github, ''),
               steps: steps
             })
             .then((data) => {
