@@ -1,7 +1,7 @@
 FROM governify/base-node-14:1.0
 
 COPY . .
-RUN npm install --only=prod
+RUN npm install --only=prod --no-package-lock
 
 ARG NODE_ENV=production
 ENV NODE_ENV $NODE_ENV
