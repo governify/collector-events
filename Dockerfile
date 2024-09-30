@@ -1,7 +1,7 @@
-FROM governify/base-node-14:1.0
+FROM node:21-alpine
 
 COPY . .
-RUN node --max-old-space-size=4096 node_modules/.bin/npm install --only=prod
+RUN npm install --only=prod
 
 ARG NODE_ENV=production
 ENV NODE_ENV $NODE_ENV
