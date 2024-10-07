@@ -34,7 +34,6 @@ const getDataPaginated = (url, token, from, to, page = 1) => {
     let requestUrl = url;
     requestUrl += requestUrl.split('/').pop().includes('?') ? '&page=' + page : '?page=' + page;
 
-    console.log("REQUEST URL: "+ requestUrl)
     let cached;
     try {
       cached = await redisManager.getCache(from + to + url);
