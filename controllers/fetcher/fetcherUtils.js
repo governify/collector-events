@@ -41,7 +41,6 @@ const requestWithHeaders = (url, extraHeaders, data = undefined) => {
 
       // Make request
       governify.httpClient.request(options).then(res => {
-        logger.debug('TemporalDB setting value: \n\t', JSON.stringify(_.cloneDeep(res.data)));
         resolve(res.data);
       }).catch(err => {
 
