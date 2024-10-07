@@ -1,3 +1,13 @@
+## [1.22.2](https://github.com/governify/collector-events/compare/v1.22.1...v1.22.2) (2024-10-07)
+
+
+### Bug Fixes
+
+* github fetcher ([6440139](https://github.com/governify/collector-events/commit/6440139e02e2d027ea4642c71b4b59df6002bc0d))
+* github fetcher ([3a19f34](https://github.com/governify/collector-events/commit/3a19f34de96da04e9d61173d09929df87710722e))
+
+
+
 ## [1.22.1](https://github.com/governify/collector-events/compare/v1.22.0...v1.22.1) (2024-10-06)
 
 
