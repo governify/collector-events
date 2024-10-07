@@ -4,7 +4,7 @@ const fetcherUtils = require('./fetcherUtils');
 const redisManager = require('./redisManager');
 const logger = require('governify-commons').getLogger().tag('fetcher-githubGQL');
 
-const apiUrl = 'https://api.github.com';
+const { GQLPaginator } = require('gql-paginator');
 
 // Function who controls the script flow
 const getInfo = (options) => {
@@ -24,12 +24,13 @@ const getInfo = (options) => {
             cached = null;
           }
 
-          logger.debug("Step.cache: ", step.cache ? "true" : "false");
+          logger.debug('Step.cache: ', step.cache ? 'true' : 'false');
 
           if (step.cache && cached) {
             resultData = cached;
+            logger.info("[CACHED COMPUTE]: Getting information from redis cache in githubGQLFetcher")
           } else {
-            await getDataPaginated(step.query, options.token).then(data => {
+            await getDataPaginated(step.query, options.token, options.paginatorConfig ? options.paginatorConfig : 'github-v1.0.0').then(data => {
               resultData = data;
               step.cache && redisManager.setCache(options.from + options.to + step.query, data);
             }).catch(err => {
@@ -38,18 +39,18 @@ const getInfo = (options) => {
           }
         } else if (step.type === 'objectGetSubObject' || step.type === 'objectGetSubObjects') {
           if (options.debug || step.debug) {
-            logger.info("STEP DEBUG [" + stepNumber + "]: Step.location: ", step.location);
-            logger.info("STEP DEBUG [" + stepNumber + "]: ResultData before getSubObject: ", JSON.stringify(resultData));
+            logger.info('STEP DEBUG [' + stepNumber + ']: Step.location: ', step.location);
+            logger.info('STEP DEBUG [' + stepNumber + ']: ResultData before getSubObject: ', JSON.stringify(resultData));
           }
           resultData = getSubObject(resultData, step.location);
-          if (options.debug || step.debug) logger.info("STEP DEBUG [" + stepNumber + "]: ResultData after getSubObject: ", JSON.stringify(resultData));
+          if (options.debug || step.debug) logger.info('STEP DEBUG [' + stepNumber + ']: ResultData after getSubObject: ', JSON.stringify(resultData));
         } else if (step.type === 'objectsFilterObject' || step.type === 'objectsFilterObjects') {
           if (options.debug || step.debug) {
-            logger.info("STEP DEBUG [" + stepNumber + "]: Step.filters: ", step.filters);
-            logger.info("STEP DEBUG [" + stepNumber + "]: ResultData before getMatches: ", JSON.stringify(resultData));
+            logger.info('STEP DEBUG [' + stepNumber + ']: Step.filters: ', step.filters);
+            logger.info('STEP DEBUG [' + stepNumber + ']: ResultData before getMatches: ', JSON.stringify(resultData));
           }
           resultData = getMatches(resultData, step.filters);
-          if (options.debug || step.debug) logger.info("STEP DEBUG [" + stepNumber + "]: ResultData after getMatches: ", JSON.stringify(resultData));
+          if (options.debug || step.debug) logger.info('STEP DEBUG [' + stepNumber + ']: ResultData after getMatches: ', JSON.stringify(resultData));
           if (step.type === 'objectsFilterObject') {
             switch (step.keep) {
               case 'first': resultData = resultData[0]; break;
@@ -63,12 +64,12 @@ const getInfo = (options) => {
           }
         } else if (step.type === 'runScript') {
           if (options.debug || step.debug) {
-            logger.info("STEP DEBUG [" + stepNumber + "]: Step.script: ", step.script);
-            logger.info("STEP DEBUG [" + stepNumber + "]: Step.variables: ", JSON.stringify({ ...step.variables, from: options.from, to: options.to }));
-            logger.info("STEP DEBUG [" + stepNumber + "]: ResultData before runScript: ", JSON.stringify(resultData));
+            logger.info('STEP DEBUG [' + stepNumber + ']: Step.script: ', step.script);
+            logger.info('STEP DEBUG [' + stepNumber + ']: Step.variables: ', JSON.stringify({ ...step.variables, from: options.from, to: options.to }));
+            logger.info('STEP DEBUG [' + stepNumber + ']: ResultData before runScript: ', JSON.stringify(resultData));
           }
           resultData = requireFromString(step.script).generic(resultData, { ...step.variables, from: options.from, to: options.to });
-          if (options.debug || step.debug) logger.info("STEP DEBUG [" + stepNumber + "]: ResultData after runScript: ", JSON.stringify(resultData));
+          if (options.debug || step.debug) logger.info('STEP DEBUG [' + stepNumber + ']: ResultData after runScript: ', JSON.stringify(resultData));
         }
       }
       resolve(resultData);
@@ -80,7 +81,7 @@ const getInfo = (options) => {
 };
 
 // Require() file from string
-function requireFromString(src, filename = 'default') {
+function requireFromString (src, filename = 'default') {
   var Module = module.constructor;
   var m = new Module();
   m._compile(src, filename);
@@ -89,18 +90,9 @@ function requireFromString(src, filename = 'default') {
 
 // Paginates github data to retrieve everything
 // TODO - Pagination
-const getDataPaginated = (query, token) => {
-  return new Promise((resolve, reject) => {
-    const requestConfig = token ? { Authorization: token, Accept: 'application/vnd.github.starfox-preview+json' } : {};
-    fetcherUtils.requestWithHeaders(apiUrl + '/graphql', requestConfig, { query: query }).then((data) => {
-      logger.debug("Query: ", JSON.stringify(query, null, 2));
-      logger.debug("getDataPaginated: ", JSON.stringify(data, null, 2));
-      resolve(data);
-    }).catch(err => {
-      logger.error(err);
-      resolve(new Error('Failed when fetching to github.'));
-    });
-  });
+async function getDataPaginated(query, token, paginatorConfig) {
+    let result = await GQLPaginator(query, token, paginatorConfig); 
+    return result
 };
 
 const getMatches = (objects, filters) => {

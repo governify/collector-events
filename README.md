@@ -342,3 +342,8 @@ As it can be seen it will filter and keep issues whose cards have been moved fro
 ## Cache in fetchers
 
 There's an object that acts as a cache in every fetcher. For development purposes, if any data is calculated, the fetcher or TPA is changed and then one proceeds to recalculate again, chances are the data already existing will not be changed since it is saved in the fetcher's cache. In order to fix this, it is necessary to restart the collector-events service and everything will be working as usual.
+
+## More documentation about Collector-Events
+Visit the [governify documentation](https://docs.governify.io/development/services/collectors/collector-events) to learn more about how the collector-events works.
+
+Learn [how to deploy the `collector-events`](https://docs.bluejay.governify.io/development/setup-development-environment/nodejs/collector-events) on your PC with NodeJS to create new functionalities.

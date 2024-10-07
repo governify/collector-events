@@ -1,3 +1,80 @@
+## [1.22.3](https://github.com/governify/collector-events/compare/v1.22.2...v1.22.3) (2024-10-07)
+
+
+### Bug Fixes
+
+* fetcher utils cache ([836b1d4](https://github.com/governify/collector-events/commit/836b1d4a694014ab9cd8145e191ce9ae3b6237fa))
+* fetcher utils cache ([4fececc](https://github.com/governify/collector-events/commit/4fececcdc211f3907b58d09a051595386183cda6))
+
+
+
+## [1.22.2](https://github.com/governify/collector-events/compare/v1.22.1...v1.22.2) (2024-10-07)
+
+
+### Bug Fixes
+
+* github fetcher ([6440139](https://github.com/governify/collector-events/commit/6440139e02e2d027ea4642c71b4b59df6002bc0d))
+* github fetcher ([3a19f34](https://github.com/governify/collector-events/commit/3a19f34de96da04e9d61173d09929df87710722e))
+
+
+
+## [1.22.1](https://github.com/governify/collector-events/compare/v1.22.0...v1.22.1) (2024-10-06)
+
+
+### Bug Fixes
+
+* githubFetcher cache ([5ffc990](https://github.com/governify/collector-events/commit/5ffc9901a06ea5268a9c2bcd0352b0f8f5e4be3c))
+
+
+
+# [1.22.0](https://github.com/governify/collector-events/compare/v1.21.0...v1.22.0) (2024-09-30)
+
+
+### Bug Fixes
+
+* dockerfile ([2fc9369](https://github.com/governify/collector-events/commit/2fc936949424cb696397ab2994869746eb74062d))
+* gh actions comment ([ed18722](https://github.com/governify/collector-events/commit/ed187221ab63a4438773eca957d727956b63e8ed))
+* github actions ([cf9cc90](https://github.com/governify/collector-events/commit/cf9cc90655883f4ac069a8c2884f0d8c74210b08))
+* node docker version ([8574046](https://github.com/governify/collector-events/commit/8574046e137852067943a83427b433daecb74a54))
+* node version ([d41d5ca](https://github.com/governify/collector-events/commit/d41d5cab14758c915a90901e9735e86ad7efe98f))
+* package ([cc15971](https://github.com/governify/collector-events/commit/cc15971fec34469cb03f58ab42233db0487cbac3))
+* package ([46a43e4](https://github.com/governify/collector-events/commit/46a43e4eac37699f122b5398f3edc54edb26e2f4))
+* package lock ([d4d0a6f](https://github.com/governify/collector-events/commit/d4d0a6f39fb7f558ff5ea1b51699153e2798a81e))
+* package version ([9d7ccc4](https://github.com/governify/collector-events/commit/9d7ccc4cb6b3c00d281d7edbcb5c2b8e956ebf13))
+* package-lock ([e0c9d19](https://github.com/governify/collector-events/commit/e0c9d19d4040f0ad72929a08c4b1333a57fc5792))
+* package-lock ([4676f8b](https://github.com/governify/collector-events/commit/4676f8bfb7273ff801dcbbfd7727023412e5f47a))
+* package-lock ([f9bf1a8](https://github.com/governify/collector-events/commit/f9bf1a8639e48e86ad5dfc86cf3b3c3db3c8472c))
+* packagees ([ecf89d4](https://github.com/governify/collector-events/commit/ecf89d4c9b041f3a5475e5f0f18f50b83d9345e0))
+
+
+### Features
+
+* gql-paginator in githubGQLFetcher ([440c1c4](https://github.com/governify/collector-events/commit/440c1c41784741c13b29b86ddf614ef3eeeb168f))
+* node version warning on github actions ([cf734c2](https://github.com/governify/collector-events/commit/cf734c2feb72f861f8a5c04a73d10a3b170bdce4))
+
+
+
+# [1.21.0](https://github.com/governify/collector-events/compare/v1.20.0...v1.21.0) (2024-07-12)
+
+
+### Bug Fixes
+
+* lint ([5f96d2c](https://github.com/governify/collector-events/commit/5f96d2cbc2588a712dc414bbcdaeb4ca71519ebe))
+* more information readme ([c2ce59c](https://github.com/governify/collector-events/commit/c2ce59c0ec8434aedc14de3c15b2475c4b37bc98))
+* oas-file summary and responses ([0d92c27](https://github.com/governify/collector-events/commit/0d92c27c292a005fc33b17ec8fa61ef78b436fd5))
+* package-lock using node v14.21.3 ([578be1b](https://github.com/governify/collector-events/commit/578be1b88221b30ccac3fca2afe318f6ffeaed09))
+* tests after oas-telemetry changes ([50861d7](https://github.com/governify/collector-events/commit/50861d734ae65ec78dc19b2f9785aa2e20d8925c))
+* Update README.md ([02a4cce](https://github.com/governify/collector-events/commit/02a4cce1ed77c0e5a28f1c71ecdc77156452a3b2))
+* Update README.md ([a7bb738](https://github.com/governify/collector-events/commit/a7bb73870515a4bba994188570dcbb824d863a81))
+
+
+### Features
+
+* env.example ([fe48e12](https://github.com/governify/collector-events/commit/fe48e1263db2b91ddc82100319e443ba9a7a2d90))
+* oas-tools/oas-telemetry ([44e76bd](https://github.com/governify/collector-events/commit/44e76bd0894ed7b7c4434a9037238547fff07915))
+
+
+
 # [1.20.0](https://github.com/governify/collector-events/compare/v1.19.1...v1.20.0) (2023-10-19)
 
 

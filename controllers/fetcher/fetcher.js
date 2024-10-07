@@ -190,7 +190,6 @@ const getMetricAndEvidences = (dsl, from, to, integrations, mainEvents, mainEven
 
 // From a "specified related json" finds the matches of the events based on a time window
 const getEventMatches = (relatedObject, mainEventsObject, mainEndpointType, from, to, integrations, authKeys, member, mainEventObject) => {
-
   return new Promise((resolve, reject) => {
     try {
       const relatedKeys = Object.keys(relatedObject);
@@ -239,7 +238,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
             steps[queryKey].query = steps[queryKey].query.replace('%PROJECT.github.repository%', integrations.github.repository).replace('%PROJECT.github.repoOwner%', integrations.github.repoOwner);
           });
 
-          logger.debug('Fetcher.getEventsFromJson: Performing GraphQL request to repository: ', integrations.github.repoOwner + "/" + integrations.github.repository);
+          logger.debug('Fetcher.getEventsFromJson: Performing GraphQL request to repository: ', integrations.github.repoOwner + '/' + integrations.github.repository);
 
           // Substitute match filters with member
           if (member) {
@@ -275,7 +274,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
             .getInfo({
               from: from,
               to: to,
-              token: generateToken(integrations.github.apiKey, authKeys.github, 'token '),
+              token: generateToken(integrations.github.apiKey, authKeys.github, ''),
               steps: steps
             })
             .then((data) => {
@@ -295,7 +294,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
         } else {
           // Replace each %% needed to be replaced with an integration
           const mustMatch = sourcesManager.getMustMatch(json[eventType][endpointType], integrations, member);
-          
+
           if (mustMatch === undefined) {
             reject(new Error('There was a problem getting the mustMatch.'));
           } else {

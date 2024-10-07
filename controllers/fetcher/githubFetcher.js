@@ -6,13 +6,12 @@ const logger = require('governify-commons').getLogger().tag('fetcher-github');
 const apiUrl = 'https://api.github.com';
 const eventType = 'github';
 
-let requestCache = {};
-let cacheDate;
+const redisManager = require('./redisManager');
 
 // Function who controls the script flow
 const getInfo = (options) => {
   return new Promise((resolve, reject) => {
-    getDataPaginated(apiUrl + options.endpoint, options.token, options.to).then((data) => {
+    getDataPaginated(apiUrl + options.endpoint, options.token, options.from, options.to).then((data) => {
       fetcherUtils.applyFilters(
         data,
         options.from,
@@ -21,54 +20,7 @@ const getInfo = (options) => {
         options.endpointType,
         eventType
       ).then((filteredData) => {
-        // TODO - Generalyze
-        if (options.endpointType === 'closedPRFiles') {
-          const result = [];
-          const promises = [];
-
-          for (const closedPR of filteredData) {
-            const promise = new Promise((resolve, reject) => {
-              try {
-                getDataPaginated(apiUrl + options.endpoint.split('?')[0] + '/' + closedPR.number + '/files', options.token, options.to).then(closedPRFiles => {
-                  closedPRFiles[0].closed_at = closedPR.closed_at; // Add the date for the matches
-                  result.push(closedPRFiles[0]);
-                  resolve();
-                }).catch(err => {
-                  reject(err);
-                });
-              } catch (err) {
-                reject(err);
-              }
-            });
-            promises.push(promise);
-          }
-
-          Promise.all(promises).then(() => {
-            let secondMustMatch = options.mustMatch;
-
-            if (JSON.stringify(secondMustMatch).includes('%SECOND%')) {
-              // Matching filter generation with only %SECOND% strings
-              secondMustMatch = getSecondMustMatch(options.mustMatch);
-              // Apply new filter
-              fetcherUtils.applyFilters(
-                result,
-                options.from,
-                options.to,
-                secondMustMatch,
-                options.endpointType,
-                eventType
-              ).then(finalResult => {
-                resolve(finalResult);
-              }).catch(err => reject(err));
-            } else {
-              resolve(result);
-            }
-          }).catch(err => {
-            reject(err);
-          });
-        } else {
           resolve(filteredData);
-        }
       }).catch(err => reject(err));
     }).catch(err => {
       reject(err);
@@ -77,38 +29,33 @@ const getInfo = (options) => {
 };
 
 // Paginates github data to retrieve everything
-const getDataPaginated = (url, token, to, page = 1) => {
-  return new Promise((resolve, reject) => {
+const getDataPaginated = (url, token, from, to, page = 1) => {
+  return new Promise(async (resolve, reject) => {
     let requestUrl = url;
     requestUrl += requestUrl.split('/').pop().includes('?') ? '&page=' + page : '?page=' + page;
 
-    const cached = requestCache[requestUrl];
+    let cached;
+    try {
+      cached = await redisManager.getCache(from + to + url);
+    } catch (err) {
+      logger.error(err);
+      cached = null;
+    }
 
-    if (cached !== undefined && cacheDate !== undefined && Date.parse(to) < Date.parse(cacheDate)) {
-      if (cached.length !== 0) {
-        logger.info("[CACHED] Requesting GitHub URL: ", requestUrl, "(Length: ", cached.length, ")");
-        if (cached.length === 30 && page < 10) { // Returns 30 elements per page, so if we get less than 30, we are in the last page
-          getDataPaginated(url, token, to, page + 1).then(recData => {
-            resolve(cached.concat(recData));
-          }).catch((err) => { reject(err); });
-        } else {
-          resolve(cached);
-        }
-      } else {
-        resolve([]);
-      }
+    if (cached) {
+      logger.info("[CACHED COMPUTE]: Getting information from redis cache in githubFetcher")
+      resolve(cached); 
     } else {
       const requestConfig = token ? { Authorization: token } : {};
       fetcherUtils.requestWithHeaders(requestUrl, requestConfig).then((data) => {
-
-        if (data.length && data.length !== 0) {
-          cacheData(data, requestUrl, to);
-          logger.info("Requesting GitHub URL: ", requestUrl, "(Length: ", data.length, ")");
+        if (data) {
+          logger.info('Requesting GitHub URL: ', requestUrl, '(Length: ', data.length, ')');
           if (data.length === 30 && page < 10) { // Returns 30 elements per page, so if we get less than 30, we are in the last page
-            getDataPaginated(url, token, to, page + 1).then(recData => {
+            getDataPaginated(url, token, from, to, page + 1).then(recData => {
               resolve(data.concat(recData));
             }).catch((err) => { reject(err); });
           } else {
+            redisManager.setCache(from + to + url, data);
             resolve(data);
           }
         } else if (typeof data[Symbol.iterator] !== 'function') { // If not iterable
@@ -119,47 +66,10 @@ const getDataPaginated = (url, token, to, page = 1) => {
           } else {
             reject(new Error('Problem when requesting to GitHub. URL: ' + requestUrl));
           }
-        } else {
-          cacheData([], requestUrl, to);
-          resolve([]);
         }
       }).catch((err) => { reject(err); });
     }
-  });
-};
-
-const cacheData = (data, requestUrl, to) => {
-  if (cacheDate !== undefined && Date.parse(to) < Date.parse(cacheDate)) { requestCache[requestUrl] = data; } else {
-    requestCache = {};
-    requestCache[requestUrl] = data;
-    cacheDate = new Date().toISOString();
-  }
-};
-
-const getSecondMustMatch = (mustMatch) => {
-  try {
-    const copy = { ...mustMatch };
-    for (const key of Object.keys(mustMatch)) {
-      if (typeof copy[key] === typeof {}) {
-        copy[key] = getSecondMustMatch(copy[key]);
-        if (Object.keys(copy[key]).length === 0) {
-          delete copy[key];
-        }
-      } else if (typeof copy[key] === typeof '') {
-        if (copy[key].includes('%SECOND%')) {
-          copy[key] = copy[key].split('%SECOND%')[1];
-        } else {
-          delete copy[key];
-        }
-      } else {
-        delete copy[key];
-      }
-    }
-    return copy;
-  } catch (err) {
-    logger.error(err);
-    return {};
-  }
+  })
 };
 
 exports.getInfo = getInfo;

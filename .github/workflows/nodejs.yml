@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [21.x]
         redis-version: [6]
     steps:
     - uses: actions/checkout@v2
@@ -27,7 +27,7 @@ jobs:
       uses: supercharge/redis-github-action@1.2.0
       with:
         redis-version: ${{ matrix.redis-version }}
-    - name: Install dependencies 
+    - name: Install dependencies
       run: npm ci
 #    - name: Check syntax
 #      run: npm run lint

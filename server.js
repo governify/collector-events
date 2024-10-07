@@ -1,6 +1,6 @@
 'use strict';
 
-const deploy = (env, commonsMiddleware) => {
+const deploy = (env, expressMiddelWares) => {
   return new Promise((resolve, reject) => {
     try {
       var fs = require('fs');
@@ -18,7 +18,9 @@ const deploy = (env, commonsMiddleware) => {
       app.use(bodyParser.json({
         strict: false
       }));
-      app.use(commonsMiddleware);
+      for (const middleware of expressMiddelWares) {
+        app.use(middleware);
+      }
       var oasTools = require('oas-tools');
       var jsyaml = require('js-yaml');
       var serverPort = process.env.PORT || 5500;
