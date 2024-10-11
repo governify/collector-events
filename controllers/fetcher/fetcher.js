@@ -357,7 +357,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                     endpoint: endpoint,
                     endpointType: endpointType,
                     mustMatch: mustMatch,
-                    noCache: json['jira']['noCache']
+                    noCache: json['gitlab']['noCache']
                   })
                   .then((data) => {
                     resolve(data);
