@@ -6,12 +6,12 @@ const logger = require('governify-commons').getLogger().tag('fetcher-jira');
 const apiUrl = 'https://jira.atlassian.com/rest/api/latest';
 const eventType = 'jira';
 
-let requestCache = {};
+const redisManager = require('./redisManager');
 
 // Function who controls the script flow
 const getInfo = (options) => {
   return new Promise((resolve, reject) => {
-    getDataPaginated((options.jiraApiBaseUrl || apiUrl) + options.endpoint, options.token).then((data) => {
+    getDataPaginated((options.jiraApiBaseUrl || apiUrl) + options.endpoint, options.token, options.from, options.to, options.noCache).then((data) => {
       fetcherUtils.applyFilters(
         data,
         options.from,
@@ -30,20 +30,23 @@ const getInfo = (options) => {
   });
 };
 
-const getDataPaginated = (url, token, offset = 0) => {
-  return new Promise((resolve, reject) => {
+const getDataPaginated = (url, token, from, to, noCache, offset = 0) => {
+  return new Promise(async (resolve, reject) => {
     let requestUrl = url;
     requestUrl += requestUrl.split('/').pop().includes('?') ? '&maxResults=100&startAt=' + offset : '?maxResults=100&startAt=' + offset;
 
-    /*const cached = requestCache[requestUrl];
+    let cached;
+    try {
+      if (!noCache) cached = await redisManager.getCache(from + to + url);
+    } catch (err) {
+      logger.error(err);
+      cached = null;
+    }
 
-    if (cached !== undefined) {
-      if (cached.length !== 0) {
-        getDataPaginated(url, token, offset + cached.length).then(recData => {
-          resolve(cached.concat(recData));
-        }).catch((err) => { reject(err); });
-      } else { resolve([]); }
-    } else {*/
+    if (cached) {
+      logger.info("[CACHED COMPUTE]: Getting information from redis cache in jiraFetcher");
+      resolve(cached);
+    } else {
       fetcherUtils.requestWithHeaders(requestUrl, { Authorization: token }).then((response) => {
         const originalData = Object.values(response).pop(); // Result of the request
         let data = [];
@@ -53,9 +56,8 @@ const getDataPaginated = (url, token, offset = 0) => {
           data.push(issue);
         });
         if (data.length && data.length !== 0) {
-          requestCache = {};
-          requestCache[requestUrl] = data;
-          getDataPaginated(url, token, offset + data.length).then(recData => {
+          redisManager.setCache(from + to + url, data);
+          getDataPaginated(url, token, from, to, noCache, offset + data.length).then(recData => {
             resolve(data.concat(recData));
           }).catch((err) => { reject(err); });
         } else if (typeof data[Symbol.iterator] !== 'function') { // If not iterable
@@ -73,11 +75,11 @@ const getDataPaginated = (url, token, offset = 0) => {
             reject(new Error('Jira unknown problem. URL: ' + requestUrl));
           }
         } else {
-          requestCache[requestUrl] = [];
+          redisManager.setCache(from + to + url, []);
           resolve([]);
         }
       }).catch(err => reject(err));
-    //}
+    }
   });
 };
 

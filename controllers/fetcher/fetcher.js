@@ -356,7 +356,8 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                     token: generateToken(integrations.gitlab.apiKey, authKeys.gitlab, ''),
                     endpoint: endpoint,
                     endpointType: endpointType,
-                    mustMatch: mustMatch
+                    mustMatch: mustMatch,
+                    noCache: json['jira']['noCache']
                   })
                   .then((data) => {
                     resolve(data);
@@ -455,7 +456,8 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                     token: generateToken(integrations.jira.apiKey, authKeys.jira, ''),
                     endpoint: endpoint,
                     endpointType: endpointType,
-                    mustMatch: mustMatch
+                    mustMatch: mustMatch,
+                    noCache: json['jira']['noCache']
                   })
                   .then((data) => {
                     resolve(data);
