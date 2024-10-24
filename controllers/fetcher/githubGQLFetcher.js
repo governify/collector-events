@@ -30,7 +30,7 @@ const getInfo = (options) => {
             resultData = cached;
             logger.info("[CACHED COMPUTE]: Getting information from redis cache in githubGQLFetcher")
           } else {
-            await getDataPaginated(step.query, options.token, options.paginatorConfig ? options.paginatorConfig : 'github-v1.0.0').then(data => {
+            await getDataPaginated(step.query, options.token, step.paginatorConfig ? step.paginatorConfig : 'github-v1.0.0').then(data => {
               resultData = data;
               step.cache && redisManager.setCache(options.from + options.to + step.query, data);
             }).catch(err => {
