@@ -229,53 +229,23 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
     try {
       const eventType = Object.keys(json)[0];
       const endpointType = Object.keys(json[eventType])[0];
+      
       if (endpointType === 'custom') {
+        const customOptions = {
+          from: from,
+          to: to,
+          steps: json[eventType].custom.steps
+        }
         if (json[eventType].custom.type === 'graphQL') {
-          const steps = JSON.parse(JSON.stringify(json[eventType].custom.steps));
-
-          // Substitute query integrations
-          Object.keys(steps).filter(stepKeyElement => ['queryGetObject', 'queryGetObjects'].includes(steps[stepKeyElement].type)).forEach(queryKey => {
-            steps[queryKey].query = steps[queryKey].query.replace('%PROJECT.github.repository%', integrations.github.repository).replace('%PROJECT.github.repoOwner%', integrations.github.repoOwner);
-          });
-
-          logger.debug('Fetcher.getEventsFromJson: Performing GraphQL request to repository: ', integrations.github.repoOwner + '/' + integrations.github.repository);
-
-          // Substitute match filters with member
-          if (member) {
-            const memberRegex = /%MEMBER\.[a-zA-Z0-9.]+%/g;
-
-            for (const stepKey of Object.keys(steps).filter(stepKeyElement => ['objectsFilterObject', 'objectsFilterObjects', 'runScript'].includes(steps[stepKeyElement].type))) {
-              if (steps[stepKey].type === 'runScript') {
-                // Substitute in the script code directly
-                steps[stepKey].script = steps[stepKey].script.replace(/%MEMBER\.github\.username%/g, member.identities.filter(i => i.source === 'github')[0].username);
-              } else {
-                const newFilters = [];
-                // For each filter with a regex match
-                for (let filter of steps[stepKey].filters.filter(filterElement => memberRegex.test(filterElement))) {
-                  // For each regex match in the filter
-                  for (const regexMatch of filter.match(memberRegex)) {
-                    const splitted = regexMatch.replace(/%/g, '').replace('MEMBER.', '').split('.');
-                    const identity = member.identities.filter(e => e.source === splitted[0])[0];
-                    if (identity) {
-                      filter = filter.replace(regexMatch, identity[splitted[1]]);
-                    }
-                  }
-
-                  newFilters.push(filter);
-                }
-
-                // Replace substituted filters with the new filters and the non substituted ones
-                steps[stepKey].filters = newFilters.concat(steps[stepKey].filters.filter(filterElement => !memberRegex.test(filterElement)));
-              }
-            }
-          }
-
           githubGQLFetcher
             .getInfo({
               from: from,
               to: to,
               token: generateToken(integrations.github.apiKey, authKeys.github, ''),
-              steps: steps
+              steps: json[eventType].custom.steps,
+              repository: integrations.github.repository,
+              owner: integrations.github.repoOwner,
+              member: member
             })
             .then((data) => {
               resolve(data);
@@ -289,6 +259,13 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
       } else {
         // Endpoint generation from endpoints.json
         const endpoint = sourcesManager.getEndpoint(eventType, endpointType, integrations);
+        const customOptions = {
+          from: from,
+          to: to,
+          endpoint: endpoint,
+          endpointType: endpointType,
+          mustMatch: mustMatch
+        }
         if (endpoint === undefined) {
           reject(new Error('There was a problem getting the endpoint.'));
         } else {
