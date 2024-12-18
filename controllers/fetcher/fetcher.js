@@ -239,7 +239,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
         switch(json[eventType].custom.type) {
           case 'graphQL':
             customOptions.token = generateToken(integrations.github.apiKey, authKeys.github, '');
-            customOptions.repository= integrations.github.repository;
+            customOptions.repository = integrations.github.repository;
             customOptions.owner= integrations.github.repoOwner;
             customOptions.member= member;
             githubGQLFetcher
@@ -366,7 +366,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                     reject(err);
                   });
                 break;
-              case 'jira':jiraApiBaseUrl
+              case 'jira':
                 options.jiraApiBaseUrl = integrations.jira.jiraApiBaseUrl;
                 options.token = generateToken(integrations.jira.apiKey, authKeys.jira, '');
                 options.noCache = json['jira']['noCache'];
