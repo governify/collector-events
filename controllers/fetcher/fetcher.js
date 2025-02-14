@@ -238,7 +238,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
         }
         switch(json[eventType].custom.type) {
           case 'graphQL':
-            customOptions.token = generateToken(integrations.github.apiKey, authKeys.github, '');
+            customOptions.token = generateToken(integrations.github.apiKey, authKeys.github.getKey(), '');
             customOptions.repository = integrations.github.repository;
             customOptions.owner= integrations.github.repoOwner;
             customOptions.member= member;
@@ -273,7 +273,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
             
             switch (eventType) {
               case 'pivotal':
-                options.token = generateToken(integrations.pivotal.apiKey, authKeys.pivotal, '');
+                options.token = generateToken(integrations.pivotal.apiKey, authKeys.pivotal.getKey(), '');
                 pivotalFetcher
                   .getInfo(options)
                   .then((data) => {
@@ -283,7 +283,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'github':
-                options.token =  generateToken(integrations.github.apiKey, authKeys.github, 'token ');
+                options.token =  generateToken(integrations.github.apiKey, authKeys.github.getKey(), 'token ');
                 githubFetcher
                   .getInfo(options)
                   .then((data) => {
@@ -293,7 +293,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'githubCI':
-                options.token =  generateToken(integrations.github.apiKey, authKeys.github, 'token ');
+                options.token =  generateToken(integrations.github.apiKey, authKeys.github.getKey(), 'token ');
                 githubCIFetcher
                   .getInfo(options)
                   .then((data) => {
@@ -303,7 +303,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'gitlab':
-                options.token = generateToken(integrations.gitlab.apiKey, authKeys.gitlab, '');
+                options.token = generateToken(integrations.gitlab.apiKey, authKeys.gitlab.getKey(), '');
                 options.gitlabApiBaseUrl = integrations.gitlab.gitlabApiBaseUrl;
                 options.noCache = json['gitlab']['noCache'];
                 gitlabFetcher
@@ -324,7 +324,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'heroku':
-                options.token = generateToken(integrations.heroku.apiKey, authKeys.heroku, 'Bearer ');
+                options.token = generateToken(integrations.heroku.apiKey, authKeys.heroku.getKey(), 'Bearer ');
                 herokuFetcher
                   .getInfo(options)
                   .then((data) => {
@@ -334,7 +334,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'travis':
-                options.token = generateToken(integrations.travis.apiKey, endpointType.includes('private') ? authKeys.travis_private : authKeys.travis_public, 'token ');
+                options.token = generateToken(integrations.travis.apiKey, endpointType.includes('private') ? authKeys.travis_private.getKey() : authKeys.travis_public.getKey(), 'token ');
                 options.public = endpointType.split('_')[1] === 'public';
                 travisFetcher
                   .getInfo(options)
@@ -345,7 +345,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'codeclimate':
-                options.token = generateToken(integrations.codeclimate.apikey, authKeys.codeclimate, 'Token token=');
+                options.token = generateToken(integrations.codeclimate.apikey, authKeys.codeclimate.getKey(), 'Token token=');
                 options.githubSlug = integrations.github.repoOwner + '/' + integrations.github.repository;
                 codeclimateFetcher
                   .getInfo(options)
@@ -357,7 +357,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                 break;
               case 'redmine':
                 options.redmineApiBaseUrl = integrations.redmine.redmineApiBaseUrl;
-                options.token = generateToken(integrations.redmine.apiKey, authKeys.redmine, '');
+                options.token = generateToken(integrations.redmine.apiKey, authKeys.redmine.getKey(), '');
                 redmineFetcher
                   .getInfo(options)
                   .then((data) => {
@@ -368,7 +368,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                 break;
               case 'jira':
                 options.jiraApiBaseUrl = integrations.jira.jiraApiBaseUrl;
-                options.token = generateToken(integrations.jira.apiKey, authKeys.jira, '');
+                options.token = generateToken(integrations.jira.apiKey, authKeys.jira.getKey(), '');
                 options.noCache = json['jira']['noCache'];
                 jiraFetcher
                   .getInfo(options)
