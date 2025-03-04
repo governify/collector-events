@@ -9,6 +9,7 @@ mustache.escape = function (text) { return text; };
 const rrulestr = require('rrule').rrulestr;
 
 const fetcher = require('./fetcher/fetcher');
+const { get } = require('http');
 
 const results = {};
 
@@ -17,23 +18,74 @@ let authKeys = {};
 
 try {
   authKeys = JSON.parse(mustache.render(fs.readFileSync('./configurations/authKeys.json', 'utf-8'), process.env, {}, ['$_[', ']']));
+  //to let authkeys be multiple keys the object will be recreated with functions wich will split and return the next key
+  const keysCopy = { ...authKeys };
+  for (const serviceName in keysCopy) {
+    authKeys[serviceName] = {
+      name: serviceName,
+      keys: keysCopy[serviceName].split(',').map(key => key.trim()),
+      index: 0,
+      getKey: function () {
+        if (!this.keys || this.keys.length === 0) {
+          throw new Error(`No keys found for service ${JSON.stringify(this)}`);
+        }
+        const currentKeyIndex = this.index;
+        const key = this.keys[currentKeyIndex];
+        this.index = (currentKeyIndex + 1) % this.keys.length;
+        logger.debug(`Using key number ${currentKeyIndex + 1} of ${this.keys.length} for service ${this.name}`);
+        return key;
+      }
+    };
+  }
 } catch (err) {
   governify.getLogger().tag('startup').info('No configurations/scopeManager/authKeys.json found! Using default values.');
   // Minimal authKeys
   authKeys = {
-    github: '',
-    pivotal: '',
-    heroku: '',
-    travis: '',
-    codeclimate: '',
-    scopeManager: '',
-    gitlab: '',
-    redmine: ''
+    github: {
+      getKey: function () {
+        return '';
+      }
+    },
+    pivotal: {
+      getKey: function () {
+        return '';
+      }
+    },
+    heroku: {
+      getKey: function () {
+        return '';
+      }
+    },
+    travis: {
+      getKey: function () {
+        return '';
+      }
+    },
+    codeclimate: {
+      getKey: function () {
+        return '';
+      }
+    },
+    scopeManager: {
+      getKey: function () {
+        return '';
+      }
+    },
+    gitlab: {
+      getKey: function () {
+        return '';
+      }
+    },
+    redmine: {
+      getKey: function () {
+        return '';
+      }
+    }
   };
 }
 
 if (process.env.PSEUDONYMIZER_URL) {
-  process.env.PSEUDONYMIZER_TOKEN = authKeys.pseudonymizer;
+  process.env.PSEUDONYMIZER_TOKEN = authKeys.pseudonymizer.getKey();
 }
 
 module.exports.addComputation = function addComputation (req, res, next) {
@@ -224,7 +276,7 @@ const getScopeInfo = (url, scope) => {
         json: true,
         headers: {
           'User-Agent': 'request',
-          Authorization: { ...authKeys }.scopeManager
+          Authorization: authKeys.scopeManager.getKey()
         }
       };
 

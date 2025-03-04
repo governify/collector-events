@@ -229,62 +229,27 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
     try {
       const eventType = Object.keys(json)[0];
       const endpointType = Object.keys(json[eventType])[0];
+      
       if (endpointType === 'custom') {
-        if (json[eventType].custom.type === 'graphQL') {
-          const steps = JSON.parse(JSON.stringify(json[eventType].custom.steps));
-
-          // Substitute query integrations
-          Object.keys(steps).filter(stepKeyElement => ['queryGetObject', 'queryGetObjects'].includes(steps[stepKeyElement].type)).forEach(queryKey => {
-            steps[queryKey].query = steps[queryKey].query.replace('%PROJECT.github.repository%', integrations.github.repository).replace('%PROJECT.github.repoOwner%', integrations.github.repoOwner);
-          });
-
-          logger.debug('Fetcher.getEventsFromJson: Performing GraphQL request to repository: ', integrations.github.repoOwner + '/' + integrations.github.repository);
-
-          // Substitute match filters with member
-          if (member) {
-            const memberRegex = /%MEMBER\.[a-zA-Z0-9.]+%/g;
-
-            for (const stepKey of Object.keys(steps).filter(stepKeyElement => ['objectsFilterObject', 'objectsFilterObjects', 'runScript'].includes(steps[stepKeyElement].type))) {
-              if (steps[stepKey].type === 'runScript') {
-                // Substitute in the script code directly
-                steps[stepKey].script = steps[stepKey].script.replace(/%MEMBER\.github\.username%/g, member.identities.filter(i => i.source === 'github')[0].username);
-              } else {
-                const newFilters = [];
-                // For each filter with a regex match
-                for (let filter of steps[stepKey].filters.filter(filterElement => memberRegex.test(filterElement))) {
-                  // For each regex match in the filter
-                  for (const regexMatch of filter.match(memberRegex)) {
-                    const splitted = regexMatch.replace(/%/g, '').replace('MEMBER.', '').split('.');
-                    const identity = member.identities.filter(e => e.source === splitted[0])[0];
-                    if (identity) {
-                      filter = filter.replace(regexMatch, identity[splitted[1]]);
-                    }
-                  }
-
-                  newFilters.push(filter);
-                }
-
-                // Replace substituted filters with the new filters and the non substituted ones
-                steps[stepKey].filters = newFilters.concat(steps[stepKey].filters.filter(filterElement => !memberRegex.test(filterElement)));
-              }
-            }
-          }
-
-          githubGQLFetcher
-            .getInfo({
-              from: from,
-              to: to,
-              token: generateToken(integrations.github.apiKey, authKeys.github, ''),
-              steps: steps
-            })
+        const customOptions = {
+          from: from,
+          to: to,
+          steps: json[eventType].custom.steps
+        }
+        switch(json[eventType].custom.type) {
+          case 'graphQL':
+            customOptions.token = generateToken(integrations.github.apiKey, authKeys.github.getKey(), '');
+            customOptions.repository = integrations.github.repository;
+            customOptions.owner= integrations.github.repoOwner;
+            customOptions.member= member;
+            githubGQLFetcher
+            .getInfo(customOptions)
             .then((data) => {
               resolve(data);
             }).catch(err => {
               reject(err);
             });
-        } else {
-          logger.error('Custom request type not valid: ' + json[eventType].custom.type);
-          resolve([]);
+            break;
         }
       } else {
         // Endpoint generation from endpoints.json
@@ -294,21 +259,23 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
         } else {
           // Replace each %% needed to be replaced with an integration
           const mustMatch = sourcesManager.getMustMatch(json[eventType][endpointType], integrations, member);
-
+          
           if (mustMatch === undefined) {
             reject(new Error('There was a problem getting the mustMatch.'));
           } else {
+            const options = {
+              from: from,
+              to: to,
+              endpoint: endpoint,
+              endpointType: endpointType,
+              mustMatch: mustMatch
+            }
+            
             switch (eventType) {
               case 'pivotal':
+                options.token = generateToken(integrations.pivotal.apiKey, authKeys.pivotal.getKey(), '');
                 pivotalFetcher
-                  .getInfo({
-                    from: from,
-                    to: to,
-                    token: generateToken(integrations.pivotal.apiKey, authKeys.pivotal, ''),
-                    endpoint: endpoint,
-                    endpointType: endpointType,
-                    mustMatch: mustMatch
-                  })
+                  .getInfo(options)
                   .then((data) => {
                     resolve(data);
                   }).catch(err => {
@@ -316,15 +283,9 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'github':
+                options.token =  generateToken(integrations.github.apiKey, authKeys.github.getKey(), 'token ');
                 githubFetcher
-                  .getInfo({
-                    from: from,
-                    to: to,
-                    token: generateToken(integrations.github.apiKey, authKeys.github, 'token '),
-                    endpoint: endpoint,
-                    endpointType: endpointType,
-                    mustMatch: mustMatch
-                  })
+                  .getInfo(options)
                   .then((data) => {
                     resolve(data);
                   }).catch(err => {
@@ -332,15 +293,9 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'githubCI':
+                options.token =  generateToken(integrations.github.apiKey, authKeys.github.getKey(), 'token ');
                 githubCIFetcher
-                  .getInfo({
-                    from: from,
-                    to: to,
-                    token: generateToken(integrations.github.apiKey, authKeys.github, 'token '),
-                    endpoint: endpoint,
-                    endpointType: endpointType,
-                    mustMatch: mustMatch
-                  })
+                  .getInfo(options)
                   .then((data) => {
                     resolve(data);
                   }).catch(err => {
@@ -348,17 +303,11 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'gitlab':
+                options.token = generateToken(integrations.gitlab.apiKey, authKeys.gitlab.getKey(), '');
+                options.gitlabApiBaseUrl = integrations.gitlab.gitlabApiBaseUrl;
+                options.noCache = json['gitlab']['noCache'];
                 gitlabFetcher
-                  .getInfo({
-                    gitlabApiBaseUrl: integrations.gitlab.gitlabApiBaseUrl,
-                    from: from,
-                    to: to,
-                    token: generateToken(integrations.gitlab.apiKey, authKeys.gitlab, ''),
-                    endpoint: endpoint,
-                    endpointType: endpointType,
-                    mustMatch: mustMatch,
-                    noCache: json['gitlab']['noCache']
-                  })
+                  .getInfo(options)
                   .then((data) => {
                     resolve(data);
                   }).catch(err => {
@@ -367,13 +316,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                 break;
               case 'ghwrapper':
                 ghwrapperFetcher
-                  .getInfo({
-                    from: from,
-                    to: to,
-                    endpoint: endpoint,
-                    endpointType: endpointType,
-                    mustMatch: mustMatch
-                  })
+                  .getInfo(options)
                   .then((data) => {
                     resolve(data);
                   }).catch(err => {
@@ -381,15 +324,9 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'heroku':
+                options.token = generateToken(integrations.heroku.apiKey, authKeys.heroku.getKey(), 'Bearer ');
                 herokuFetcher
-                  .getInfo({
-                    from: from,
-                    to: to,
-                    token: generateToken(integrations.heroku.apiKey, authKeys.heroku, 'Bearer '),
-                    endpoint: endpoint,
-                    endpointType: endpointType,
-                    mustMatch: mustMatch
-                  })
+                  .getInfo(options)
                   .then((data) => {
                     resolve(data);
                   }).catch(err => {
@@ -397,16 +334,10 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'travis':
+                options.token = generateToken(integrations.travis.apiKey, endpointType.includes('private') ? authKeys.travis_private.getKey() : authKeys.travis_public.getKey(), 'token ');
+                options.public = endpointType.split('_')[1] === 'public';
                 travisFetcher
-                  .getInfo({
-                    from: from,
-                    to: to,
-                    token: generateToken(integrations.travis.apiKey, endpointType.includes('private') ? authKeys.travis_private : authKeys.travis_public, 'token '),
-                    endpoint: endpoint,
-                    endpointType: endpointType,
-                    mustMatch: mustMatch,
-                    public: endpointType.split('_')[1] === 'public'
-                  })
+                  .getInfo(options)
                   .then((data) => {
                     resolve(data);
                   }).catch(err => {
@@ -414,16 +345,10 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'codeclimate':
+                options.token = generateToken(integrations.codeclimate.apikey, authKeys.codeclimate.getKey(), 'Token token=');
+                options.githubSlug = integrations.github.repoOwner + '/' + integrations.github.repository;
                 codeclimateFetcher
-                  .getInfo({
-                    from: from,
-                    to: to,
-                    token: generateToken(integrations.codeclimate.apikey, authKeys.codeclimate, 'Token token='),
-                    endpoint: endpoint,
-                    endpointType: endpointType,
-                    mustMatch: mustMatch,
-                    githubSlug: integrations.github.repoOwner + '/' + integrations.github.repository
-                  })
+                  .getInfo(options)
                   .then((data) => {
                     resolve(data);
                   }).catch(err => {
@@ -431,16 +356,10 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'redmine':
+                options.redmineApiBaseUrl = integrations.redmine.redmineApiBaseUrl;
+                options.token = generateToken(integrations.redmine.apiKey, authKeys.redmine.getKey(), '');
                 redmineFetcher
-                  .getInfo({
-                    redmineApiBaseUrl: integrations.redmine.redmineApiBaseUrl,
-                    from: from,
-                    to: to,
-                    token: generateToken(integrations.redmine.apiKey, authKeys.redmine, ''),
-                    endpoint: endpoint,
-                    endpointType: endpointType,
-                    mustMatch: mustMatch
-                  })
+                  .getInfo(options)
                   .then((data) => {
                     resolve(data);
                   }).catch(err => {
@@ -448,17 +367,11 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                   });
                 break;
               case 'jira':
+                options.jiraApiBaseUrl = integrations.jira.jiraApiBaseUrl;
+                options.token = generateToken(integrations.jira.apiKey, authKeys.jira.getKey(), '');
+                options.noCache = json['jira']['noCache'];
                 jiraFetcher
-                  .getInfo({
-                    jiraApiBaseUrl: integrations.jira.jiraApiBaseUrl,
-                    from: from,
-                    to: to,
-                    token: generateToken(integrations.jira.apiKey, authKeys.jira, ''),
-                    endpoint: endpoint,
-                    endpointType: endpointType,
-                    mustMatch: mustMatch,
-                    noCache: json['jira']['noCache']
-                  })
+                  .getInfo(options)
                   .then((data) => {
                     resolve(data);
                   }).catch(err => {
