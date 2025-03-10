@@ -12,6 +12,7 @@ const travisFetcher = require('./travisFetcher');
 const redmineFetcher = require('./redmineFetcher');
 const jiraFetcher = require('./jiraFetcher');
 const codeclimateFetcher = require('./codeclimateFetcher');
+const giteaFetcher = require('./giteaFetcher');
 const sourcesManager = require('../sourcesManager/sourcesManager');
 
 // Function who controls the flow of the app
@@ -371,6 +372,19 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                 options.token = generateToken(integrations.jira.apiKey, authKeys.jira.getKey(), '');
                 options.noCache = json['jira']['noCache'];
                 jiraFetcher
+                  .getInfo(options)
+                  .then((data) => {
+                    resolve(data);
+                  }).catch(err => {
+                    reject(err);
+                  });
+                break;
+              case 'gitea':
+                options.giteaApiBaseUrl = integrations.gitea.giteaApiBaseUrl;
+                options.token = generateToken(integrations.gitea.apiKey, authKeys.gitea.getKey(), '');
+                options.owner = integrations.gitea.repoOwner;
+                options.repository = integrations.gitea.repository;
+                giteaFetcher
                   .getInfo(options)
                   .then((data) => {
                     resolve(data);

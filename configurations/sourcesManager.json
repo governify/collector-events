@@ -171,6 +171,24 @@
                 "endpoint": "/search?jql=project={jira.projectId}&fields=assignee,status,updated",
                 "payloadDate": "fields.updated"
             }
+        },
+        "gitea": {
+            "commits": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/commits?page=1&limit=50",
+                "payloadDate": "created"
+            },
+            "allPR": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/pulls?page=1&limit=50",
+                "payloadDate": "created_at"
+            },
+            "branchesLastCommit": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/branches?page=1&limit=50",
+                "payloadDate": "commit.timestamp"
+            },
+            "newBranches": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/branches",
+                "payloadDate": ""
+            }
         }
     },
     "substitutions": [
