@@ -174,15 +174,15 @@
         },
         "gitea": {
             "commits": {
-                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/commits?page=1&limit=50",
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/commits",
                 "payloadDate": "created"
             },
             "allPR": {
-                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/pulls?page=1&limit=50",
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/pulls",
                 "payloadDate": "created_at"
             },
             "branchesLastCommit": {
-                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/branches?page=1&limit=50",
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/branches",
                 "payloadDate": "commit.timestamp"
             },
             "newBranches": {
