@@ -12,6 +12,14 @@ const redisManager = require('./redisManager');
 const getInfo = (options) => {
   return new Promise((resolve, reject) => {
     getDataPaginated((options.jiraApiBaseUrl || apiUrl) + options.endpoint, options.token, options.from, options.to, options.noCache).then((data) => {
+      if(options.endpointType === 'issuesByAssigneeAndStatus'){
+        data = data.filter(issue => issue.assigneeName === options.mustMatch.assigneeName && issue.statusName === options.mustMatch.statusName)
+        resolve(data);
+      } else if(options.endpointType === 'issuesDevelByAssigneeAndStatus'){
+        data = data.filter(issue => issue.statusName === options.mustMatch.statusName)
+        resolve(data);
+      }
+      
       fetcherUtils.applyFilters(
         data,
         options.from,

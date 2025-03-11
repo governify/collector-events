@@ -167,9 +167,17 @@
                 "endpoint": "/search?jql=project={jira.projectId}",
                 "payloadDate": "fields.updated"
             },
-            "issuesByStatusAndAssignee": {
-                "endpoint": "/search?jql=project={jira.projectId}&fields=assignee,status,updated",
-                "payloadDate": "fields.updated"
+            "issuesByAssigneeAndStatus": {
+                "endpoint": "/search?jql=project={jira.projectId} AND labels IN ('DEVEL', 'DEVELNOBRANCH') AND assignee IS NOT EMPTY&fields=assignee,status,labels",
+                "payloadDate": ""
+            },
+            "issuesDevelByAssigneeAndStatus": {
+                "endpoint": "/search?jql=project={jira.projectId} AND labels IN ('DEVEL')&fields=assignee,status,labels",
+                "payloadDate": ""
+            },
+            "closedIssuesByAssigneeAndStatus": {
+                "endpoint": "/search?jql=project={jira.projectId} AND resolution IS NOT EMPTY AND assignee IS NOT EMPTY AND labels IN ('DEVEL', 'DEVELNOBRANCH')&fields=assignee,resolutiondate,status,labels",
+                "payloadDate": "fields.resolutiondate"
             }
         },
         "gitea": {
