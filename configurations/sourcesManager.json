@@ -176,7 +176,7 @@
                 "payloadDate": "statusName"
             },
             "closedIssuesByAssigneeAndStatus": {
-                "endpoint": "/search?jql=project={jira.projectId} AND resolution IS NOT EMPTY AND assignee IS NOT EMPTY AND labels IN ('DEVEL', 'DEVELNOBRANCH')&fields=assignee,resolutiondate,status,labels",
+                "endpoint": "/search?jql=project={jira.projectId} AND resolution IS NOT EMPTY AND assignee IS NOT EMPTY AND labels IN ('DEVEL', 'DEVEL-NOBRANCH')&fields=assignee,resolutiondate,status,labels",
                 "payloadDate": "fields.resolutiondate"
             }
         },
