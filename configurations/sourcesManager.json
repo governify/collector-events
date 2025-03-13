@@ -168,7 +168,7 @@
                 "payloadDate": "fields.updated"
             },
             "issuesByAssigneeAndStatus": {
-                "endpoint": "/search?jql=project={jira.projectId} AND labels IN ('DEVEL', 'DEVELNOBRANCH') AND assignee IS NOT EMPTY&fields=assignee,status,labels",
+                "endpoint": "/search?jql=project={jira.projectId} AND labels IN ('DEVEL', 'DEVEL-NOBRANCH') AND assignee IS NOT EMPTY&fields=assignee,status,labels",
                 "payloadDate": "statusName"
             },
             "issuesDevelByAssigneeAndStatus": {
