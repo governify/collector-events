@@ -230,6 +230,7 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
     try {
       const eventType = Object.keys(json)[0];
       const endpointType = Object.keys(json[eventType])[0];
+      logger.info('Calculating events for:', eventType, endpointType);
       
       if (endpointType === 'custom') {
         const customOptions = {
