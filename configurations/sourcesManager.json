@@ -172,7 +172,7 @@
                 "payloadDate": "statusName"
             },
             "issuesDevelByAssigneeAndStatus": {
-                "endpoint": "/search?jql=project={jira.projectId} AND labels IN ('DEVEL')&fields=assignee,status,labels",
+                "endpoint": "/search?jql=project={jira.projectId} AND labels IN ('DEVEL')&fields=assignee,status,labels,summary",
                 "payloadDate": "statusName"
             },
             "closedIssuesByAssigneeAndStatus": {
@@ -196,6 +196,10 @@
             "newBranches": {
                 "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/branches",
                 "payloadDate": "undifined"
+            },
+            "allBranches": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/branches",
+                "payloadDate": "name"
             }
         }
     },
