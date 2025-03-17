@@ -160,11 +160,11 @@
         },
         "jira": {
             "newIssues": {
-                "endpoint": "/search?jql=project={jira.projectId}",
+                "endpoint": "/search?jql=project={jira.projectId}&fields=created",
                 "payloadDate": "fields.created"
             },
             "updatedIssues": {
-                "endpoint": "/search?jql=project={jira.projectId}",
+                "endpoint": "/search?jql=project={jira.projectId}&fields=updated",
                 "payloadDate": "fields.updated"
             },
             "issuesByAssigneeAndStatus": {

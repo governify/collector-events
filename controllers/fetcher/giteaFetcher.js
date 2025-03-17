@@ -32,6 +32,11 @@ const getInfo = async (options) => {
             pagedData = await fetcherUtils.requestWithHeaders(url, requestConfig);
             allData = allData.concat(pagedData);
             page++;
+
+            if(options.endpointType === 'commits'){
+                if(pagedData[pagedData.length - 1].created < options.from)
+                    break;
+            }
         } while (pagedData.length === pageSize); // Continua hasta que no haya más datos
 
         if (options.endpointType === 'newBranches') {

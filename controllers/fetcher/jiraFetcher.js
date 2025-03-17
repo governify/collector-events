@@ -11,7 +11,7 @@ const redisManager = require('./redisManager');
 // Function who controls the script flow
 const getInfo = (options) => {
   return new Promise((resolve, reject) => {
-    getDataPaginated((options.jiraApiBaseUrl || apiUrl) + options.endpoint, options.token, options.from, options.to, options.noCache).then((data) => {
+    getDataPaginated((options.jiraApiBaseUrl || apiUrl) + options.endpoint, options.token, options.from, options.to, options.noCache, options.endpointType).then((data) => {
       if(options.endpointType === 'issuesByAssigneeAndStatus'){
         data = data.filter(issue => issue.assigneeName === options.mustMatch.assigneeName && issue.statusName === options.mustMatch.statusName)
         resolve(data);
@@ -38,7 +38,7 @@ const getInfo = (options) => {
   });
 };
 
-const getDataPaginated = (url, token, from, to, noCache, offset = 0) => {
+const getDataPaginated = (url, token, from, to, noCache, endpointType, offset = 0) => {
   return new Promise(async (resolve, reject) => {
     let requestUrl = url;
     requestUrl += requestUrl.split('/').pop().includes('?') ? '&maxResults=100&startAt=' + offset : '?maxResults=100&startAt=' + offset;
@@ -65,6 +65,14 @@ const getDataPaginated = (url, token, from, to, noCache, offset = 0) => {
         });
         if (data.length && data.length !== 0) {
           redisManager.setCache(from + to + url, data);
+          // Optimización de paginación (Corte de la paginación si el último elemento de la página es menor a la fecha de inicio del cálculo)
+          if(endpointType === 'newIssues'){
+            if(originalData[originalData.length - 1].fields.created < from)
+              resolve(data);
+          } else if(endpointType === 'updatedIssues'){
+            if(originalData[originalData.length - 1].fields.updated < from)
+              resolve(data);
+          }
           getDataPaginated(url, token, from, to, noCache, offset + data.length).then(recData => {
             resolve(data.concat(recData));
           }).catch((err) => { reject(err); });
