@@ -121,10 +121,13 @@ const getMatches = (objects, filters) => {
           let matched2 = false;
           const splitted2 = filterObjectLocation.split('.*any*.');
 
-          for (const object2 of getSubObject(object, splitted2[0])) {
-            if (getSubObject(object2, splitted2[1]) === filterMustMatch) {
-              matched2 = true;
-              break;
+          const subObject = getSubObject(object, splitted2[0])
+          if(subObject !== undefined){
+            for (const object2 of subObject) {
+              if (getSubObject(object2, splitted2[1]) === filterMustMatch) {
+                matched2 = true;
+                break;
+              }
             }
           }
           matched = matched2;
