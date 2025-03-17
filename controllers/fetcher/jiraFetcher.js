@@ -16,6 +16,7 @@ const getInfo = (options) => {
         data = data.filter(issue => issue.assigneeName === options.mustMatch.assigneeName && issue.statusName === options.mustMatch.statusName)
         resolve(data);
       } else if(options.endpointType === 'issuesDevelByAssigneeAndStatus'){
+        console.log("ENTRAND")
         data = data.filter(issue => issue.statusName === options.mustMatch.statusName)
         resolve(data);
       }
@@ -73,7 +74,7 @@ const getDataPaginated = (url, token, from, to, noCache, endpointType, offset = 
             if(originalData[originalData.length - 1].fields.updated < from)
               resolve(data);
           }
-          getDataPaginated(url, token, from, to, noCache, offset + data.length).then(recData => {
+          getDataPaginated(url, token, from, to, noCache, endpointType, offset + data.length).then(recData => {
             resolve(data.concat(recData));
           }).catch((err) => { reject(err); });
         } else if (typeof data[Symbol.iterator] !== 'function') { // If not iterable
