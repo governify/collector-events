@@ -47,7 +47,7 @@ const getInfo = async (options) => {
             const newBranches = allData.filter(branch => !storedBranches.includes(branch.name));
             storedBranches = allData.map(branch => branch.name);
             return newBranches;
-        } else if(options.endpointType === 'allBranches' || options.endpointType === 'PR') {
+        } else if(options.endpointType === 'allBranches' || options.endpointType === 'PRs') {
             return allData;
         }
 
