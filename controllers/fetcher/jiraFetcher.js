@@ -16,7 +16,6 @@ const getInfo = (options) => {
         data = data.filter(issue => issue.assigneeName === options.mustMatch.assigneeName && issue.statusName === options.mustMatch.statusName)
         resolve(data);
       } else if(options.endpointType === 'issuesDevelByAssigneeAndStatus'){
-        console.log("ENTRAND")
         data = data.filter(issue => issue.statusName === options.mustMatch.statusName)
         resolve(data);
       }

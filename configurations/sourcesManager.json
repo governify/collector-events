@@ -189,6 +189,10 @@
                 "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/pulls",
                 "payloadDate": "created_at"
             },
+            "PRs": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/pulls",
+                "payloadDate": "title"
+            },
             "branchesLastCommit": {
                 "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/branches",
                 "payloadDate": "commit.timestamp"
