@@ -33,14 +33,14 @@ const getInfo = (options) => {
             logger.info("[CACHED COMPUTE]: Getting information from redis cache in githubGQLFetcher")
           } else {
             if(step.query){ //generic gql paginator config
-              await getDataPaginated(step.query, options.token, step.paginatorConfig ? step.paginatorConfig : 'github-v1.0.0', null).then(data => {
+              await getDataPaginated(step.query, options.token, step.paginatorConfig ? step.paginatorConfig : 'github-v1.0.0').then(data => {
                 resultData = data;
                 step.cache && redisManager.setCache(options.from + options.to + step.query, data);
               }).catch(err => {
                 reject(err);
               });
             } else { // specific gql paginator config
-              await getDataPaginated(null, options.token, step.paginatorConfig, {repository:options.owner, owner:options.owner}).then(data => {
+              await getDataPaginated(step.paginatorCustomQueries, options.token, step.paginatorConfig ? step.paginatorConfig : 'github-v1.0.0').then(data => {
                 resultData = data;
                 step.cache && redisManager.setCache(options.from + options.to + step.query, data);
               }).catch(err => {
@@ -100,9 +100,8 @@ function requireFromString (src, filename = 'default') {
 }
 
 // Paginates github data to retrieve everything
-// TODO - Pagination
-async function getDataPaginated(query, token, paginatorConfig) {
-    let result = await GQLPaginator(query, token, paginatorConfig); 
+async function getDataPaginated(queryOptions, token, paginatorConfig) {
+    let result = await GQLPaginator(queryOptions, token, paginatorConfig); 
     return result
 };
 
@@ -173,7 +172,10 @@ const resolveSteps = (steps, repository, owner, member) => {
 
   // Substitute query integrations
   Object.keys(steps).filter(stepKeyElement => ['queryGetObject', 'queryGetObjects'].includes(steps[stepKeyElement].type)).forEach(queryKey => {
-    steps[queryKey].query = steps[queryKey].query.replace('%PROJECT.github.repository%', repository).replace('%PROJECT.github.repoOwner%', owner);
+    if(steps[queryKey].query)
+      steps[queryKey].query = steps[queryKey].query.replace('%PROJECT.github.repository%', repository).replace('%PROJECT.github.repoOwner%', owner);
+    else if(steps[queryKey].paginatorCustomQueries)
+      steps[queryKey].paginatorCustomQueries.initialQuery = steps[queryKey].paginatorCustomQueries.initialQuery.replace('%PROJECT.github.repository%', repository).replace('%PROJECT.github.repoOwner%', owner);
   });
 
   logger.debug('Fetcher.getEventsFromJson: Performing GraphQL request to repository: ', owner + '/' + repository);
