@@ -174,8 +174,12 @@ const resolveSteps = (steps, repository, owner, member) => {
   Object.keys(steps).filter(stepKeyElement => ['queryGetObject', 'queryGetObjects'].includes(steps[stepKeyElement].type)).forEach(queryKey => {
     if(steps[queryKey].query)
       steps[queryKey].query = steps[queryKey].query.replace('%PROJECT.github.repository%', repository).replace('%PROJECT.github.repoOwner%', owner);
-    else if(steps[queryKey].paginatorCustomQueries)
+    else if(steps[queryKey].paginatorCustomQueries){
       steps[queryKey].paginatorCustomQueries.initialQuery = steps[queryKey].paginatorCustomQueries.initialQuery.replace('%PROJECT.github.repository%', repository).replace('%PROJECT.github.repoOwner%', owner);
+      for(const subquery of steps[queryKey].paginatorCustomQueries.subqueries){
+        subquery.query = subquery.query.replace('%PROJECT.github.repository%', repository).replace('%PROJECT.github.repoOwner%', owner);
+      }
+    }
   });
 
   logger.debug('Fetcher.getEventsFromJson: Performing GraphQL request to repository: ', owner + '/' + repository);
