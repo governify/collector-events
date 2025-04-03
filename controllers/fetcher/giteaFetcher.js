@@ -3,6 +3,7 @@
 const redisManager = require('./redisManager');
 const logger = require('governify-commons').getLogger().tag('fetcher-gitea');
 const fetcherUtils = require('./fetcherUtils');
+const { name } = require('mustache');
 
 const eventType = "gitea";
 let storedBranches = [];
@@ -42,10 +43,16 @@ const getInfo = async (options) => {
         if (options.endpointType === 'newBranches') {
             if (storedBranches.length === 0) {
                 storedBranches = allData.map(branch => branch.name);
+                console.info('No stored branches found, storing all branches:', storedBranches.length);
                 return [];
             }
+            
             const newBranches = allData.filter(branch => !storedBranches.includes(branch.name));
+            console.info('Current stored branches:', storedBranches.length, 'All branches found:', allData.length, 'New branches:', newBranches.length);
+
             storedBranches = allData.map(branch => branch.name);
+            console.info('Updated stored branches:', storedBranches.length);
+            console.info('New branches:', newBranches.length, 'New branches:', newBranches);
             return newBranches;
         } else if(options.endpointType === 'allBranches' || options.endpointType === 'PRs') {
             return allData;
