@@ -205,6 +205,20 @@
                 "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/branches",
                 "payloadDate": "name"
             }
+        },
+        "lucidchain": {
+            "currentMonthIssuesPassedSLAPercentage": {
+                "endpoint": "/sla-metrics/passedSLAPercentage",
+                "payloadDate": "updated_on"
+            },
+            "currentMonthIssuesPassedTTOPercentage": {
+                "endpoint": "/sla-metrics/passedTTOPercentage",
+                "payloadDate": "updated_on"
+            },
+            "currentMonthIssuesPassedTTRPercentage": {
+                "endpoint": "/sla-metrics/passedTTRPercentage",
+                "payloadDate": "updated_on"
+            }
         }
     },
     "substitutions": [
