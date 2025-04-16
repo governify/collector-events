@@ -207,15 +207,15 @@
             }
         },
         "lucidchain": {
-            "currentMonthIssuesPassedSLAPercentage": {
+            "issuesPassedSLAPercentage": {
                 "endpoint": "/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/passedSLAPercentage",
                 "payloadDate": "updated_on"
             },
-            "currentMonthIssuesPassedTTOPercentage": {
+            "issuesPassedTTOPercentage": {
                 "endpoint": "/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/passedTTOPercentage",
                 "payloadDate": "updated_on"
             },
-            "currentMonthIssuesPassedTTRPercentage": {
+            "issuesPassedTTRPercentage": {
                 "endpoint": "/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/passedTTRPercentage",
                 "payloadDate": "updated_on"
             }
