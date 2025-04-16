@@ -13,6 +13,7 @@ const redmineFetcher = require('./redmineFetcher');
 const jiraFetcher = require('./jiraFetcher');
 const codeclimateFetcher = require('./codeclimateFetcher');
 const giteaFetcher = require('./giteaFetcher');
+const lucidchainFetcher = require('./lucidchainFetcher')
 const sourcesManager = require('../sourcesManager/sourcesManager');
 
 // Function who controls the flow of the app
@@ -350,6 +351,17 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                 options.token = generateToken(integrations.codeclimate.apikey, authKeys.codeclimate.getKey(), 'Token token=');
                 options.githubSlug = integrations.github.repoOwner + '/' + integrations.github.repository;
                 codeclimateFetcher
+                  .getInfo(options)
+                  .then((data) => {
+                    resolve(data);
+                  }).catch(err => {
+                    reject(err);
+                  });
+                break;
+              case 'lucidchain':
+                options.lucidchainApiBaseUrl = integrations.lucidchain.lucidchainApiBaseUrl;
+                options.token = integrations.lucidchain.apiKey
+                lucidchainFetcher
                   .getInfo(options)
                   .then((data) => {
                     resolve(data);

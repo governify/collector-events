@@ -207,16 +207,28 @@
             }
         },
         "lucidchain": {
-            "currentMonthIssuesPassedSLAPercentage": {
-                "endpoint": "/sla-metrics/passedSLAPercentage",
+            "currentMonthItopIssuesPassedSLAPercentage": {
+                "endpoint": "/sla-metrics/itop/passedSLAPercentage",
                 "payloadDate": "updated_on"
             },
-            "currentMonthIssuesPassedTTOPercentage": {
-                "endpoint": "/sla-metrics/passedTTOPercentage",
+            "currentMonthRedmineIssuesPassedSLAPercentage": {
+                "endpoint": "/sla-metrics/redmine/passedSLAPercentage",
                 "payloadDate": "updated_on"
             },
-            "currentMonthIssuesPassedTTRPercentage": {
-                "endpoint": "/sla-metrics/passedTTRPercentage",
+            "currentMonthItopIssuesPassedTTOPercentage": {
+                "endpoint": "/sla-metrics/itop/passedTTOPercentage",
+                "payloadDate": "updated_on"
+            },
+            "currentMonthRedmineIssuesPassedTTOPercentage": {
+                "endpoint": "/sla-metrics/redmine/passedTTOPercentage",
+                "payloadDate": "updated_on"
+            },
+            "currentMonthItopIssuesPassedTTRPercentage": {
+                "endpoint": "/sla-metrics/itop/passedTTRPercentage",
+                "payloadDate": "updated_on"
+            },
+            "currentMonthRedmineIssuesPassedTTRPercentage": {
+                "endpoint": "/sla-metrics/redmine/passedTTRPercentage",
                 "payloadDate": "updated_on"
             }
         }
