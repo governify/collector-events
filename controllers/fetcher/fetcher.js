@@ -360,7 +360,9 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                 break;
               case 'lucidchain':
                 options.lucidchainApiBaseUrl = integrations.lucidchain.lucidchainApiBaseUrl;
-                options.token = integrations.lucidchain.apiKey
+                options.target = integrations.lucidchain.target
+                options.service_type = integrations.lucidchain.service_type
+                options.token = integrations.lucidchain.token
                 lucidchainFetcher
                   .getInfo(options)
                   .then((data) => {
