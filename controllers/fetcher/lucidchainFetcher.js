@@ -9,7 +9,7 @@ const eventType = 'lucidchain';
 // Function who controls the script flow
 const getInfo = (options) => {
   return new Promise((resolve, reject) => {
-    getData(apiUrl+options.endpoint, options.token).then((data) => {
+    getData(apiUrl+options.endpoint, options.token, options).then((data) => {
         if( isNumberType( options.endpointType) ){
           const result = data.issue_group
           if (typeof result === "string") {
@@ -28,10 +28,11 @@ const getInfo = (options) => {
     });
 };
 
-const getData = async (url, token) => {  
+const getData = async (url, token, options) => {
+    const urlWithFilters = `${url}?from=${options.from}&to=${options.to}`
     const requestConfig = token ? { Authorization: "Bearer " + token } : {};
-    logger.debug(`Calling ${JSON.stringify(url)} lucid chain endpoint`)
-    return await fetcherUtils.requestWithHeaders(url, requestConfig);
+    logger.debug(`Calling ${JSON.stringify(urlWithFilters)} lucid chain endpoint`)
+    return await fetcherUtils.requestWithHeaders(urlWithFilters, requestConfig);
 };
 
 const isNumberType = (endpointType) => {
