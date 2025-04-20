@@ -32,7 +32,7 @@ const getData = async (url, token, options) => {
     const urlWithFilters = `${url}?from=${options.from}&to=${options.to}`
     const requestConfig = token ? { Authorization: "Bearer " + token } : {};
     logger.debug(`Calling ${JSON.stringify(urlWithFilters)} lucid chain endpoint`)
-    return await fetcherUtils.requestWithHeaders(urlWithFilters, requestConfig);
+    return await fetcherUtils.requestWithHeaders(url, requestConfig);
 };
 
 const isNumberType = (endpointType) => {
