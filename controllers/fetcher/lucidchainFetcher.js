@@ -10,30 +10,16 @@ const eventType = 'lucidchain';
 const getInfo = (options) => {
   return new Promise((resolve, reject) => {
     getData(apiUrl+options.endpoint, options.token).then((data) => {
-        logger.info(JSON.stringify(data))
-        if (options.endpointType === 'issuesPassedSLAPercentage') {
+        if( isNumberType( options.endpointType) ){
+          logger.fatal(JSON.stringify('YES'))
+          const result = data.issue_group
           if (typeof result === "string") {
             throw new Error(result);
           }
-          resolve([{ issuesPassedSLAPercentage: result }]);
-        } else if (options.endpointType === 'issuesPassedTTOPercentage') {
-          let result = data;
-          if (typeof result === "string") {
-            throw new Error(result);
-          }
-          resolve([{ issuesPassedTTOPercentage: result }]);
-        } else if (options.endpointType === 'issuesPassedTTRPercentage') {
-          let result = data;
-          if (typeof result === "string") {
-            throw new Error(result);
-          }
-          resolve([{ issuesPassedTTRPercentage: result }]);
-        } else if(options.endpointType === 'problematicOpenIssues'){
-          if (typeof result === "string") {
-            throw new Error(result);
-          }
-          resolve(data.issue_group);
-        } else {
+          resolve(result)
+        } 
+        else {
+          logger.fatal(JSON.stringify('NO'))
           resolve(data);
         }
       }).catch(err => {
@@ -49,5 +35,10 @@ const getData = async (url, token) => {
     logger.debug(`Calling ${JSON.stringify(url)} lucid chain endpoint`)
     return await fetcherUtils.requestWithHeaders(url, requestConfig);
 };
+
+const isNumberType = (endpointType) => {
+  const res = endpointType === 'issuesPassingSLA' || endpointType === 'issuesPassingTTO' || endpointType === 'issuesPassingTTR'  || endpointType === 'problematicOpenIssues' || endpointType === 'totalIssues'  
+  return res;
+}
 
 exports.getInfo = getInfo;
