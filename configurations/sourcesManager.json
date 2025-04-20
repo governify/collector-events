@@ -208,19 +208,24 @@
         },
         "lucidchain": {
             "issuesPassingSLA": {
-                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/issuesPassingSLA"
+                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/issuesPassingSLA",
+                "payloadDate": "created_on"
             },
             "issuesPassingTTO": {
-                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/issuesPassingTTO"
+                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/issuesPassingTTO",
+                "payloadDate": "created_on"
             },
             "issuesPassingTTR": {
-                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/issuesPassingTTR"
+                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/issuesPassingTTR",
+                "payloadDate": "created_on"
             },
             "problematicOpenIssues": {
-                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/problematicOpenIssues"
+                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/problematicOpenIssues",
+                "payloadDate": "created_on"
             },
             "totalIssues": {
-                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/issues"
+                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/issues",
+                "payloadDate": "created_on"
             }
         }
     },
