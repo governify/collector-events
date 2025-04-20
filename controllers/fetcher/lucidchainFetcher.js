@@ -11,7 +11,6 @@ const getInfo = (options) => {
   return new Promise((resolve, reject) => {
     getData(apiUrl+options.endpoint, options.token).then((data) => {
         if( isNumberType( options.endpointType) ){
-          logger.fatal(JSON.stringify('YES'))
           const result = data.issue_group
           if (typeof result === "string") {
             throw new Error(result);
@@ -19,7 +18,6 @@ const getInfo = (options) => {
           resolve(result)
         } 
         else {
-          logger.fatal(JSON.stringify('NO'))
           resolve(data);
         }
       }).catch(err => {
