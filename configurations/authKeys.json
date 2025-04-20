@@ -11,5 +11,5 @@
     "redmine":"$_[KEY_REDMINE]",
     "jira":"$_[KEY_JIRA]",
     "gitea":"$_[KEY_GITEA]",
-    "lucidchainuser": "$_[KEY_LUCIDCHAIN]"
+    "lucidchain": "$_[KEY_LUCIDCHAIN]"
 }

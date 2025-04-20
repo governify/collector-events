@@ -208,17 +208,18 @@
         },
         "lucidchain": {
             "issuesPassedSLAPercentage": {
-                "endpoint": "/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/passedSLAPercentage",
-                "payloadDate": "measuredAt"
+                "endpoint": "/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/passedSLAPercentage"
             },
             "issuesPassedTTOPercentage": {
-                "endpoint": "/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/passedTTOPercentage",
-                "payloadDate": "measuredAt"
+                "endpoint": "/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/passedTTOPercentage"
             },
             "issuesPassedTTRPercentage": {
-                "endpoint": "/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/passedTTRPercentage",
-                "payloadDate": "measuredAt"
+                "endpoint": "/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/passedTTRPercentage"
+            },
+            "problematicOpenIssues": {
+                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/issues"
             }
+        }
         }
     },
     "substitutions": [
