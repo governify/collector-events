@@ -226,6 +226,10 @@
             "totalIssues": {
                 "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/issues",
                 "payloadDate": "created_on"
+            },
+            "openIssues": {
+                "endpoint": "/api/sla-metrics/{lucidchain.target}/{lucidchain.service_type}/openIssues",
+                "payloadDate": "created_on"
             }
         }
     },

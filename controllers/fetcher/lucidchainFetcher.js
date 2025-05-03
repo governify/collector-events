@@ -36,7 +36,7 @@ const getData = async (url, token, options) => {
 };
 
 const isNumberType = (endpointType) => {
-  const res = endpointType === 'issuesPassingSLA' || endpointType === 'issuesPassingTTO' || endpointType === 'issuesPassingTTR'  || endpointType === 'problematicOpenIssues' || endpointType === 'totalIssues'  
+  const res = endpointType === 'issuesPassingSLA' || endpointType === 'issuesPassingTTO' || endpointType === 'issuesPassingTTR'  || endpointType === 'problematicOpenIssues' || endpointType === 'totalIssues' || endpointType === 'openIssues'  
   return res;
 }
 
