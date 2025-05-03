@@ -363,7 +363,6 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
                 options.target = integrations.lucidchain.target
                 options.service_type = integrations.lucidchain.service_type
                 options.token = integrations.lucidchain.token
-                options.token = generateToken(integrations.lucidchain.apiKey, authKeys.lucidchain.getKey(), '');
                 lucidchainFetcher
                   .getInfo(options)
                   .then((data) => {
