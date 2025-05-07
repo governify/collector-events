@@ -2,8 +2,8 @@
 const fetcherUtils = require('./fetcherUtils');
 const logger = require('governify-commons').getLogger().tag('fetcher-lucidchain');
 
-// const apiUrl = 'https://wizard.lucidchain.governify.io';
-const apiUrl = 'http://localhost:3000';
+const apiUrl = 'https://wizard.lucidchain.governify.io';
+// const apiUrl = 'http://localhost:3000';
 const eventType = 'lucidchain';
 
 // Function who controls the script flow
