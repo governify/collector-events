@@ -10,5 +10,6 @@
     "gitlab":"$_[KEY_GITLAB]",
     "redmine":"$_[KEY_REDMINE]",
     "jira":"$_[KEY_JIRA]",
-    "gitea":"$_[KEY_GITEA]"
+    "gitea":"$_[KEY_GITEA]",
+    "lucidchain": "$_[KEY_LUCIDCHAIN]"
 }

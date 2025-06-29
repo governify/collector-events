@@ -80,6 +80,11 @@ try {
       getKey: function () {
         return '';
       }
+    },
+    lucidchain: {
+      getKey: function (){
+        return '';
+      }
     }
   };
 }

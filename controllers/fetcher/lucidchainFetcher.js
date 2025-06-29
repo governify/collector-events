@@ -1,0 +1,43 @@
+'use strict';
+const fetcherUtils = require('./fetcherUtils');
+const logger = require('governify-commons').getLogger().tag('fetcher-lucidchain');
+
+const apiUrl = 'https://wizard.lucidchain.governify.io';
+// const apiUrl = 'http://localhost:3000';
+const eventType = 'lucidchain';
+
+// Function who controls the script flow
+const getInfo = (options) => {
+  return new Promise((resolve, reject) => {
+    getData(apiUrl+options.endpoint, options.token, options).then((data) => {
+        if( isNumberType( options.endpointType) ){
+          const result = data.issue_group
+          if (typeof result === "string") {
+            throw new Error(result);
+          }
+          resolve(result)
+        } 
+        else {
+          resolve(data);
+        }
+      }).catch(err => {
+        reject(err);
+      });
+    }).catch(err => {
+      reject(err);
+    });
+};
+
+const getData = async (url, token, options) => {
+    const urlWithFilters = `${url}?from=${options.from}&to=${options.to}`
+    const requestConfig = token ? { Authorization: "Bearer " + token } : {};
+    logger.debug(`Calling ${JSON.stringify(urlWithFilters)} lucid chain endpoint`)
+    return await fetcherUtils.requestWithHeaders(urlWithFilters, requestConfig);
+};
+
+const isNumberType = (endpointType) => {
+  const res = endpointType === 'issuesPassingSLA' || endpointType === 'issuesPassingTTO' || endpointType === 'issuesPassingTTR'  || endpointType === 'problematicOpenIssues' || endpointType === 'totalIssues' || endpointType === 'openIssues'  
+  return res;
+}
+
+exports.getInfo = getInfo;
