@@ -80,6 +80,11 @@ try {
       getKey: function () {
         return '';
       }
+    },
+    zenhub: {
+      getKey: function () {
+        return '';
+      }
     }
   };
 }

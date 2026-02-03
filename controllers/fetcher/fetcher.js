@@ -13,6 +13,7 @@ const redmineFetcher = require('./redmineFetcher');
 const jiraFetcher = require('./jiraFetcher');
 const codeclimateFetcher = require('./codeclimateFetcher');
 const giteaFetcher = require('./giteaFetcher');
+const zenhubFetcher = require('./zenhubFetcher');
 const sourcesManager = require('../sourcesManager/sourcesManager');
 
 // Function who controls the flow of the app
@@ -236,14 +237,14 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
         const customOptions = {
           from: from,
           to: to,
-          steps: json[eventType].custom.steps
+          member: member,
         }
         switch(json[eventType].custom.type) {
           case 'graphQL':
             customOptions.token = generateToken(integrations.github.apiKey, authKeys.github.getKey(), '');
             customOptions.repository = integrations.github.repository;
             customOptions.owner= integrations.github.repoOwner;
-            customOptions.member= member;
+            customOptions.steps = json[eventType].custom.steps;
             githubGQLFetcher
             .getInfo(customOptions)
             .then((data) => {
@@ -251,6 +252,22 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
             }).catch(err => {
               reject(err);
             });
+            break;
+          case 'zenhub':
+            customOptions.zenhubToken = generateToken(integrations.zenhub.apiKey, authKeys.zenhub.getKey(), '');
+            customOptions.githubToken = generateToken(integrations.github.apiKey, authKeys.github.getKey(), '');
+            customOptions.metric = json[eventType].custom.metric;
+            customOptions.filters = json[eventType].custom.filters;
+            customOptions.workspaceId = integrations.zenhub.workspaceId;
+            customOptions.repository = integrations.github.repository;
+            customOptions.owner= integrations.github.repoOwner;
+            zenhubFetcher
+              .getInfo(customOptions)
+              .then((data) => {
+              resolve(data);
+              }).catch(err => {
+              reject(err);
+              });
             break;
         }
       } else {

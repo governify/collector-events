@@ -3,7 +3,6 @@
 const redisManager = require('./redisManager');
 const logger = require('governify-commons').getLogger().tag('fetcher-gitea');
 const fetcherUtils = require('./fetcherUtils');
-const { name } = require('mustache');
 
 const eventType = "gitea";
 let storedBranches = [];
