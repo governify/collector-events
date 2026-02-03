@@ -10,17 +10,10 @@ const getInfo = async (options) => {
             identitity = options.member.identities.find(identitity => identitity.source === 'github');
         switch (options.metric) {
             case 'ISSUES_BY_COLUMN':
-                if (options.filters.column == "Closed")
-                    result = await getClosedIssues(options.workspaceId, options.zenhubToken);
-                else
-                    result = await getZenhubIssuesByColumn(options.workspaceId, options.filters.column, options.zenhubToken);
+                result = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
                 break;
             case 'ISSUES_BY_COLUMN_WITH_ASSOCIATED_BRANCHES':
-                let zenhubIssuesBranches = [];
-                if (options.filters.column == "Closed")
-                    zenhubIssuesBranches = await getClosedIssues(options.workspaceId, options.zenhubToken);
-                else
-                    zenhubIssuesBranches = await getZenhubIssuesByColumn(options.workspaceId, options.filters.column, options.zenhubToken);
+                const zenhubIssuesBranches = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
                 const issuesWithBranches = await getGithubIssues(options.owner, options.repository, options.githubToken);
                 result = issuesWithBranches.filter(issue =>
                     zenhubIssuesBranches.some(zenhubIssue => zenhubIssue.number === issue.number) &&
@@ -28,11 +21,7 @@ const getInfo = async (options) => {
                 );
                 break;
             case 'ISSUES_BY_COLUMN_WITH_ASSOCIATED_PULL_REQUESTS_BY_STATUS':
-                let zenhubIssuesPR = [];
-                if (options.filters.column == "Closed")
-                    zenhubIssuesPR = await getClosedIssues(options.workspaceId, options.zenhubToken);
-                else
-                    zenhubIssuesPR = await getZenhubIssuesByColumn(options.workspaceId, options.filters.column, options.zenhubToken);
+                const zenhubIssuesPR = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
                 const githubIssuesWithPRs = await getGithubIssues(options.owner, options.repository, options.githubToken);
                 result = githubIssuesWithPRs.filter(issue => 
                     zenhubIssuesPR.some(zenhubIssue => zenhubIssue.number === issue.number) &&
@@ -40,36 +29,24 @@ const getInfo = async (options) => {
                 );
                 break;
             case 'ISSUES_BY_COLUMN_ASSOCIATED_TO_MEMBER':
-                let zenhubIssuesMember = [];
-                if (options.filters.column == "Closed")
-                    zenhubIssuesMember = await getClosedIssues(options.workspaceId, options.zenhubToken);
-                else
-                    zenhubIssuesMember = await getZenhubIssuesByColumn(options.workspaceId, options.filters.column, options.zenhubToken);
+                const zenhubIssuesMember = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
                 result = zenhubIssuesMember.filter(issue => 
                     issue.assignees.nodes.some(assignee => assignee.login === identitity.username)
                 );
                 break;
-            case 'ISSUES_BY_COLUMN_FILTERED_BY_CLOSED_AT_DATE_ASSOCIATED_TO_MEMBER':
-                let zenhubIssuesDate = [];
-                if (options.filters.column == "Closed")
-                    zenhubIssuesDate = await getClosedIssues(options.workspaceId, options.zenhubToken);
-                else
-                    zenhubIssuesDate = await getZenhubIssuesByColumn(options.workspaceId, options.filters.column, options.zenhubToken);
+            case 'ISSUES_BY_COLUMN_FILTERED_BY_UPDATED_AT_DATE_ASSOCIATED_TO_MEMBER':
+                const zenhubIssuesDate = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
                 result = zenhubIssuesDate.filter(issue => {
-                    const issueClosedAt = new Date(issue.closedAt);
+                    const issueUpdatedAt = new Date(issue.updatedAt);
                     const fromDate = new Date(options.from);
                     const toDate = new Date(options.to);
-                    return issueClosedAt >= fromDate && 
-                           issueClosedAt <= toDate && 
+                    return issueUpdatedAt >= fromDate && 
+                           issueUpdatedAt <= toDate && 
                            issue.assignees.nodes.some(assignee => assignee.login === identitity.username);
                 });
                 break;
             case 'ISSUES_WITH_DIFFERENT_BRANCHES_BY_COLUMN':
-                let zenhubIssuesDiffBranches = [];
-                if (options.filters.column == "Closed")
-                    zenhubIssuesDiffBranches = await getClosedIssues(options.workspaceId, options.zenhubToken);
-                else
-                    zenhubIssuesDiffBranches = await getZenhubIssuesByColumn(options.workspaceId, options.filters.column, options.zenhubToken);
+                const zenhubIssuesDiffBranches = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
                 const issuesWithDiffBranches = await getGithubIssues(options.owner, options.repository, options.githubToken);
                 const issuesFiltered = issuesWithDiffBranches.filter(issue =>
                     zenhubIssuesDiffBranches.some(zenhubIssue => zenhubIssue.number === issue.number) &&
@@ -93,6 +70,26 @@ const getInfo = async (options) => {
     } catch (err) {
         throw err;
     }
+};
+
+const fetchZenhubIssuesByColumns = async (filters, workspaceId, zenhubToken) => {
+    let zenhubIssues = [];
+    if (filters.columns) {
+        for (const column of filters.columns) {
+            if (column === "Closed") {
+                zenhubIssues.push(...await getClosedIssues(workspaceId, zenhubToken));
+            } else {
+                zenhubIssues.push(...await getZenhubIssuesByColumn(workspaceId, column, zenhubToken));
+            }
+        }
+    } else {
+        if (filters.column === "Closed") {
+            zenhubIssues = await getClosedIssues(workspaceId, zenhubToken);
+        } else {
+            zenhubIssues = await getZenhubIssuesByColumn(workspaceId, filters.column, zenhubToken);
+        }
+    }
+    return zenhubIssues;
 };
 
 const getZenhubIssuesByColumn = async (workspaceId, column, zenhubToken) => {
@@ -132,6 +129,7 @@ const getZenhubIssuesByColumn = async (workspaceId, column, zenhubToken) => {
                 nodes {
                     number
                     title
+                    updatedAt
                     pullRequest
                     assignees(first:10) {
                         nodes {
@@ -171,7 +169,7 @@ const getClosedIssues = async (workspaceId, zenhubToken) => {
                 nodes {
                     number
                     title
-                    closedAt
+                    updatedAt
                     pullRequest
                     assignees(first:10) {
                         nodes {
@@ -212,7 +210,7 @@ const getGithubIssues = async (repoOwner, repoName, githubToken) => {
                     nodes {
                         number
                         title
-                        closedAt
+                        updatedAt
                         assignees(first: 10) {
                             nodes {
                                 name
