@@ -9,5 +9,7 @@
     "pseudonymizer": "$_[KEY_PSEUDONYMIZER]",
     "gitlab":"$_[KEY_GITLAB]",
     "redmine":"$_[KEY_REDMINE]",
-    "jira":"$_[KEY_JIRA]"
+    "jira":"$_[KEY_JIRA]",
+    "gitea":"$_[KEY_GITEA]",
+    "zenhub":"$_[KEY_ZENHUB]"
 }

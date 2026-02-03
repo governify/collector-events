@@ -22,7 +22,12 @@ Example with redmine:
             	}
         	}
 
-	3. Add minimal authkey in ./controllers/apiv2computationsControllerService.js:     redmine: ''
+	3. Add minimal authkey in ./controllers/apiv2computationsControllerService.js:     
+		redmine: {
+			getKey: function () {
+				return '';
+			}
+		}
 	4. Require the fetcher that will be created and add the corresponding "case" inside the "switch" in ./controllers/fetcher/fetcher.js:
 
 		const redmineFetcher = require('./redmineFetcher');
@@ -33,7 +38,7 @@ Example with redmine:
                   .getInfo({
                     from: from,
                     to: to,
-                    token: generateToken(integrations.redmine.apiKey, authKeys.redmine, ''),
+                    token: generateToken(integrations.redmine.apiKey, authKeys.redmine.getKey(), ''),
                     endpoint: endpoint,
                     endpointType: endpointType,
                     mustMatch: mustMatch,

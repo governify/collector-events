@@ -160,12 +160,50 @@
         },
         "jira": {
             "newIssues": {
-                "endpoint": "/search?jql=project={jira.projectId}",
+                "endpoint": "/search?jql=project={jira.projectId}&fields=created",
                 "payloadDate": "fields.created"
             },
             "updatedIssues": {
-                "endpoint": "/search?jql=project={jira.projectId}",
+                "endpoint": "/search?jql=project={jira.projectId}&fields=updated",
                 "payloadDate": "fields.updated"
+            },
+            "issuesByAssigneeAndStatus": {
+                "endpoint": "/search?jql=project={jira.projectId} AND labels IN ('DEVEL', 'DEVEL-NOBRANCH') AND assignee IS NOT EMPTY&fields=assignee,status,labels",
+                "payloadDate": "statusName"
+            },
+            "issuesDevelByAssigneeAndStatus": {
+                "endpoint": "/search?jql=project={jira.projectId} AND labels IN ('DEVEL')&fields=assignee,status,labels,summary",
+                "payloadDate": "statusName"
+            },
+            "closedIssuesByAssigneeAndStatus": {
+                "endpoint": "/search?jql=project={jira.projectId} AND resolution IS NOT EMPTY AND assignee IS NOT EMPTY AND labels IN ('DEVEL', 'DEVEL-NOBRANCH')&fields=assignee,resolutiondate,status,labels",
+                "payloadDate": "fields.resolutiondate"
+            }
+        },
+        "gitea": {
+            "commits": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/commits",
+                "payloadDate": "created"
+            },
+            "allPR": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/pulls",
+                "payloadDate": "created_at"
+            },
+            "PRs": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/pulls",
+                "payloadDate": "title"
+            },
+            "branchesLastCommit": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/branches",
+                "payloadDate": "commit.timestamp"
+            },
+            "newBranches": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/branches",
+                "payloadDate": "undifined"
+            },
+            "allBranches": {
+                "endpoint": "/repos/{gitea.repoOwner}/{gitea.repository}/branches",
+                "payloadDate": "name"
             }
         }
     },
