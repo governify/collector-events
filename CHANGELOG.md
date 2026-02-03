@@ -1,3 +1,38 @@
+# [1.23.0](https://github.com/governify/collector-events/compare/v1.22.3...v1.23.0) (2026-02-03)
+
+
+### Bug Fixes
+
+* correct label in endpoint jira query for issuesByAssigneeAndStatus ([3e344a5](https://github.com/governify/collector-events/commit/3e344a58582adfd0b3c710beaaff629cf23e03f9))
+* correct label in endpoint query for closedIssuesByAssigneeAndStatus ([9e7a7ea](https://github.com/governify/collector-events/commit/9e7a7ea5bcb25c05e7331ecbd37add5500d10fdb))
+* correct parameter passing in gitea getDataPaginated function ([ed8ffaf](https://github.com/governify/collector-events/commit/ed8ffafd3b20dd6d5e8b1872f4005664e184b95a))
+* correct payloadDate values to 'undifined' in sourcesManager.json ([12773a2](https://github.com/governify/collector-events/commit/12773a283ad47dd100be371a92014aba07edf6f3))
+* handle undefined subObject in getMatches function ([99b1124](https://github.com/governify/collector-events/commit/99b1124d6e402148cd9896e3bf6df23b3f3e874d))
+* jira fetcher ([432fdf2](https://github.com/governify/collector-events/commit/432fdf2949a31349342c8c6db649a6a659a5efbc))
+* step paginatorConfig ([6861260](https://github.com/governify/collector-events/commit/68612606cf17cf3ac725d60cd1fa8917f6d83b4d))
+* update endpoint type check for 'PRs' in giteaFetcher ([e37a32a](https://github.com/governify/collector-events/commit/e37a32a79e6e0b5e698e7c6a56c534f7f762ec95))
+* update gql-paginator to version 2.6.0 and enhance query resolution in githubGQLFetcher ([bff7206](https://github.com/governify/collector-events/commit/bff7206e22512bab65ade8a61825f628d306afcf))
+* update gql-paginator to version 2.6.1 ([63b39ce](https://github.com/governify/collector-events/commit/63b39cef4ea0b2ea92f65eb7fbe9572a2efd35d1))
+* update payloadDate values to 'statusName' in sourcesManager.json ([9a2af29](https://github.com/governify/collector-events/commit/9a2af294d38d1ead325f4582be3da0024b75bb6d))
+
+
+### Features
+
+* add Gitea integration with fetcher and configuration updates ([e50fa07](https://github.com/governify/collector-events/commit/e50fa07a5659ac5171682ab3dcb16411bff2752b))
+* add logging for event type and endpoint type ([41d2b38](https://github.com/governify/collector-events/commit/41d2b389df301c39c72ff02a32267e5f6cf2c049))
+* add new 'PR' endpoint to Gitea fetcher ([a32056d](https://github.com/governify/collector-events/commit/a32056dd0ac761ed31cc91dcf9a80d1ac37d6cf4))
+* enhance Jira and Gitea fetchers with pagination optimizations ([9c13c1b](https://github.com/governify/collector-events/commit/9c13c1bc4940b94f6ffdf46bf0b0684b12d0d1b8))
+* enhance Jira fetcher with new endpoints for issue filtering by assignee and status ([ebfccd7](https://github.com/governify/collector-events/commit/ebfccd7c47b580cb147a1f6ee64766a7e3a26f66))
+* fetcher options refactor ([75b7432](https://github.com/governify/collector-events/commit/75b7432d64fcfe1a62a79b8ca868a3df48802603))
+* fetcher refactor ([c397644](https://github.com/governify/collector-events/commit/c397644bd2a2f1f0f0467e4279645b167caccd31))
+* gitea implement 'allBranches' endpoint ([494b82e](https://github.com/governify/collector-events/commit/494b82e43ab8e43c84ffcd153b06297c90d248ef))
+* githubGQLFetcher pagination data ([851b68a](https://github.com/governify/collector-events/commit/851b68a5894e6d99e3da8f814c59d71ba88699b1))
+* refactor authKeys to support multiple keys and improve token retrieval ([087cddb](https://github.com/governify/collector-events/commit/087cddbe8144eef0236ea942fd1351515fea4963))
+* update Gitea fetcher to support pagination ([176a824](https://github.com/governify/collector-events/commit/176a8246ae120977c1842a1c5f9b0de8b6670650))
+* zenhub fetcher ([7e81398](https://github.com/governify/collector-events/commit/7e8139883d499cb86a9311eb07d1907183265d90))
+
+
+
 ## [1.22.3](https://github.com/governify/collector-events/compare/v1.22.2...v1.22.3) (2024-10-07)
 
 
