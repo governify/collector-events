@@ -6,7 +6,7 @@ const getInfo = async (options) => {
         logger.info('Fetching Zenhub metric', options.metric, `for ${options.member ? options.member.memberId : 'Team'}`);
         let result = [];
         let identitity
-        if(options.member !== undefined)
+        if (options.member !== undefined)
             identitity = options.member.identities.find(identitity => identitity.source === 'github');
         switch (options.metric) {
             case 'ISSUES_BY_COLUMN':
@@ -23,14 +23,14 @@ const getInfo = async (options) => {
             case 'ISSUES_BY_COLUMN_WITH_ASSOCIATED_PULL_REQUESTS_BY_STATUS':
                 const zenhubIssuesPR = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
                 const githubIssuesWithPRs = await getGithubIssues(options.owner, options.repository, options.githubToken);
-                result = githubIssuesWithPRs.filter(issue => 
+                result = githubIssuesWithPRs.filter(issue =>
                     zenhubIssuesPR.some(zenhubIssue => zenhubIssue.number === issue.number) &&
                     issue.closedByPullRequestsReferences.nodes.some(pr => pr.state === options.filters.status)
                 );
                 break;
             case 'ISSUES_BY_COLUMN_ASSOCIATED_TO_MEMBER':
                 const zenhubIssuesMember = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
-                result = zenhubIssuesMember.filter(issue => 
+                result = zenhubIssuesMember.filter(issue =>
                     issue.assignees.nodes.some(assignee => assignee.login === identitity.username)
                 );
                 break;
@@ -40,9 +40,9 @@ const getInfo = async (options) => {
                     const issueUpdatedAt = new Date(issue.updatedAt);
                     const fromDate = new Date(options.from);
                     const toDate = new Date(options.to);
-                    return issueUpdatedAt >= fromDate && 
-                           issueUpdatedAt <= toDate && 
-                           issue.assignees.nodes.some(assignee => assignee.login === identitity.username);
+                    return issueUpdatedAt >= fromDate &&
+                        issueUpdatedAt <= toDate &&
+                        issue.assignees.nodes.some(assignee => assignee.login === identitity.username);
                 });
                 break;
             case 'ISSUES_WITH_DIFFERENT_BRANCHES_BY_COLUMN':
@@ -52,18 +52,19 @@ const getInfo = async (options) => {
                     zenhubIssuesDiffBranches.some(zenhubIssue => zenhubIssue.number === issue.number) &&
                     issue.linkedBranches.nodes.length > 0
                 );
-                const knownBranches = new Set();
-                result = issuesFiltered.filter(issue => {
-                    const issueBranches = issue.linkedBranches.nodes.map(branch => branch.ref.name);
-                    const hasUniqueBranch = issueBranches.some(branch => {
-                        if (!knownBranches.has(branch)) {
-                            knownBranches.add(branch);
-                            return true;
+                const knownBranches = [];
+                for (const issue of issuesFiltered) {
+                    let issueAdded = false;
+                    for (const branch of issue.linkedBranches.nodes) {
+                        if (!knownBranches.includes(branch.ref.name)) {
+                            knownBranches.push(branch.ref.name);
+                            if (!issueAdded) {
+                                result.push(issue);
+                                issueAdded = true;
+                            }
                         }
-                        return false;
-                    });
-                    return hasUniqueBranch; 
-                });
+                    }
+                }
                 break;
         }
         return result;
