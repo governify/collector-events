@@ -15,6 +15,7 @@ const codeclimateFetcher = require('./codeclimateFetcher');
 const giteaFetcher = require('./giteaFetcher');
 const zenhubFetcher = require('./zenhubFetcher');
 const sourcesManager = require('../sourcesManager/sourcesManager');
+const githubGQLFetcherV2 = require('./githubGQLV2Fetcher');
 
 // Function who controls the flow of the app
 const compute = (dsl, from, to, integrations, authKeys, member) => {
@@ -267,6 +268,20 @@ const getEventsFromJson = (json, from, to, integrations, authKeys, member) => {
               resolve(data);
               }).catch(err => {
               reject(err);
+              });
+            break;
+          case 'githubGQLV2':
+            customOptions.token = generateToken(integrations.github.apiKey, authKeys.github.getKey(), '');
+            customOptions.repository = integrations.github.repository;
+            customOptions.owner= integrations.github.repoOwner;
+            customOptions.metric = json[eventType].custom.metric;
+            customOptions.filters = json[eventType].custom.filters;
+            githubGQLFetcherV2
+              .getInfo(customOptions)
+              .then((data) => {
+                resolve(data);
+              }).catch(err => {
+                reject(err);
               });
             break;
         }

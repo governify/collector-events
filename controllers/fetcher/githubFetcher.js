@@ -1,7 +1,7 @@
 'use strict';
 
 const fetcherUtils = require('./fetcherUtils');
-const logger = require('governify-commons').getLogger().tag('fetcher-github');
+const logger = require('governify-commons').getLogger().tag('fetcher-githubGQL');
 
 const apiUrl = 'https://api.github.com';
 const eventType = 'github';
