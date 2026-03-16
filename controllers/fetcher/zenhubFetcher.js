@@ -11,6 +11,10 @@ const getInfo = async (options) => {
         switch (options.metric) {
             case 'ISSUES_BY_COLUMN':
                 result = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
+                if (options.filters?.afterCreatedAt) {
+                    const dateFilter = new Date(options.filters.afterCreatedAt);
+                    result = result.filter(issue => new Date(issue.createdAt) >= dateFilter);
+                }
                 break;
             case 'ISSUES_BY_COLUMN_WITH_ASSOCIATED_BRANCHES':
                 const zenhubIssuesBranches = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
@@ -23,10 +27,17 @@ const getInfo = async (options) => {
             case 'ISSUES_BY_COLUMN_WITH_ASSOCIATED_PULL_REQUESTS_BY_STATUS':
                 const zenhubIssuesPR = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
                 const githubIssuesWithPRs = await getGithubIssues(options.owner, options.repository, options.githubToken);
-                result = githubIssuesWithPRs.filter(issue =>
-                    zenhubIssuesPR.some(zenhubIssue => zenhubIssue.number === issue.number) &&
-                    issue.closedByPullRequestsReferences.nodes.some(pr => pr.state === options.filters.status)
-                );
+                result = githubIssuesWithPRs.filter(issue => {
+                    const matchesZenhub = zenhubIssuesPR.some(zenhubIssue => zenhubIssue.number === issue.number);
+                    const matchesPRStatus = issue.closedByPullRequestsReferences.nodes.some(pr => pr.state === options.filters.status);
+                    if (!matchesZenhub || !matchesPRStatus) return false;
+                    if (options.filters?.afterCreatedAt) {
+                        const issueCreatedAt = new Date(issue.createdAt);
+                        const dateFilter = new Date(options.filters.afterCreatedAt);
+                        return issueCreatedAt >= dateFilter;
+                    }
+                    return true;
+                });
                 break;
             case 'ISSUES_BY_COLUMN_ASSOCIATED_TO_MEMBER':
                 const zenhubIssuesMember = await fetchZenhubIssuesByColumns(options.filters, options.workspaceId, options.zenhubToken);
@@ -131,6 +142,7 @@ const getZenhubIssuesByColumn = async (workspaceId, column, zenhubToken) => {
                     number
                     title
                     updatedAt
+                    createdAt
                     pullRequest
                     assignees(first:10) {
                         nodes {
@@ -171,6 +183,7 @@ const getClosedIssues = async (workspaceId, zenhubToken) => {
                     number
                     title
                     updatedAt
+                    createdAt
                     pullRequest
                     assignees(first:10) {
                         nodes {
@@ -212,6 +225,7 @@ const getGithubIssues = async (repoOwner, repoName, githubToken) => {
                         number
                         title
                         updatedAt
+                        createdAt
                         assignees(first: 10) {
                             nodes {
                                 name
