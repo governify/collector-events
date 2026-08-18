@@ -1,3 +1,7 @@
+## [1.23.1](https://github.com/governify/collector-events/compare/v1.23.0...v1.23.1) (2026-08-18)
+
+
+
 # [1.23.0](https://github.com/governify/collector-events/compare/v1.22.3...v1.23.0) (2026-02-03)
 
 
